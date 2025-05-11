@@ -7,7 +7,7 @@ import UserProfile from "./auth/UserProfile";
 import Calendar from "./calendar/Calendar";
 import TaskList from "./tasks/TaskList";
 import DailyPlanner from "./planner/DailyPlanner";
-import AIAssistant from "./assistant/AIAssistant";
+// import AIAssistant from "./assistant/AIAssistant";
 import FeedbackForm from "./feedback/FeedbackForm";
 import { Button, Icon } from "./DemoComponents";
 
@@ -136,7 +136,7 @@ export default function ProductivityHub() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <AIAssistant userName={userName} />
+                  {/* <AIAssistant userName={userName} /> */}
                 </div>
                 <div>
                   <TaskList />
