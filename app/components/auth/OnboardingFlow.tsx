@@ -44,7 +44,7 @@ export default function OnboardingFlow({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    
+
     if (type === "checkbox") {
       setUserData({
         ...userData,
@@ -172,7 +172,7 @@ export default function OnboardingFlow({
               </h3>
               <p className="text-[var(--app-foreground-muted)] text-sm">
                 {userData.name ? `Welcome, ${userData.name}! ` : ""}
-                Your productivity journey starts now. We've set up your account with the preferences you selected.
+                Your productivity journey starts now. We&apos;ve set up your account with the preferences you selected.
               </p>
             </div>
           </div>
