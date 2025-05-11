@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Icon } from "../DemoComponents";
+import { Button } from "../DemoComponents";
 
 type FeedbackFormProps = {
   onSubmit?: (feedback: Feedback) => void;
@@ -36,7 +36,7 @@ export default function FeedbackForm({
     >
   ) => {
     const { name, value, type } = e.target as HTMLInputElement;
-    
+
     if (type === "checkbox") {
       setFeedback({
         ...feedback,
@@ -59,21 +59,21 @@ export default function FeedbackForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!feedback.rating || !feedback.category || !feedback.comment) return;
-    
+
     setIsSubmitting(true);
-    
+
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    
+
     if (onSubmit) {
       onSubmit(feedback);
     }
-    
+
     setIsSubmitting(false);
     setIsSubmitted(true);
-    
+
     // Reset form after submission
     setFeedback({
       rating: 0,
@@ -99,7 +99,7 @@ export default function FeedbackForm({
           </button>
         )}
       </div>
-      
+
       <div className="p-5">
         {isSubmitted ? (
           <div className="text-center py-6 space-y-4">
@@ -124,7 +124,7 @@ export default function FeedbackForm({
               Feedback Submitted
             </h4>
             <p className="text-[var(--app-foreground-muted)]">
-              Thank you for your valuable feedback! We'll use it to improve your experience.
+              Thank you for your valuable feedback! We&apos;ll use it to improve your experience.
             </p>
             {onClose && (
               <div className="mt-6">
@@ -159,7 +159,7 @@ export default function FeedbackForm({
                 ))}
               </div>
             </div>
-            
+
             <div>
               <label
                 htmlFor="category"
@@ -183,7 +183,7 @@ export default function FeedbackForm({
                 <option value="other">Other</option>
               </select>
             </div>
-            
+
             <div>
               <label
                 htmlFor="comment"
@@ -202,7 +202,7 @@ export default function FeedbackForm({
                 required
               />
             </div>
-            
+
             <div>
               <label
                 htmlFor="email"
@@ -220,7 +220,7 @@ export default function FeedbackForm({
                 placeholder="your@email.com"
               />
             </div>
-            
+
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -234,10 +234,10 @@ export default function FeedbackForm({
                 htmlFor="allowContact"
                 className="ml-2 text-sm text-[var(--app-foreground)]"
               >
-                It's okay to contact me about my feedback
+                  It&apos;s okay to contact me about my feedback
               </label>
             </div>
-            
+
             <div className="flex justify-end space-x-2 pt-2">
               {onClose && (
                 <Button variant="ghost" type="button" onClick={onClose}>
