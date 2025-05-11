@@ -28,7 +28,20 @@ export default function AccountSettings({
   initialSettings = defaultSettings,
   onSave,
 }: AccountSettingsProps) {
-  const [settings, setSettings] = useState<AccountSettings>(initialSettings);
+  // Try to load saved settings from localStorage
+  const loadSavedSettings = (): AccountSettings => {
+    try {
+      const savedSettings = localStorage.getItem("accountSettings");
+      if (savedSettings) {
+        return JSON.parse(savedSettings) as AccountSettings;
+      }
+    } catch (error) {
+      console.error("Error loading saved settings:", error);
+    }
+    return initialSettings;
+  };
+
+  const [settings, setSettings] = useState<AccountSettings>(loadSavedSettings());
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<"notifications" | "appearance" | "privacy">("notifications");
 
@@ -49,14 +62,14 @@ export default function AccountSettings({
 
   const handleSave = async () => {
     setIsSaving(true);
-    
+
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 500));
-    
+
     if (onSave) {
       onSave(settings);
     }
-    
+
     setIsSaving(false);
   };
 
@@ -67,7 +80,7 @@ export default function AccountSettings({
           Account Settings
         </h3>
       </div>
-      
+
       <div className="flex border-b border-[var(--app-card-border)]">
         <button
           className={`px-4 py-2 text-sm font-medium ${
@@ -100,7 +113,7 @@ export default function AccountSettings({
           Privacy
         </button>
       </div>
-      
+
       <div className="p-5 space-y-6">
         {activeTab === "notifications" && (
           <div className="space-y-4">
@@ -174,7 +187,7 @@ export default function AccountSettings({
             </div>
           </div>
         )}
-        
+
         {activeTab === "appearance" && (
           <div className="space-y-4">
             <h4 className="font-medium text-[var(--app-foreground)]">
@@ -226,7 +239,7 @@ export default function AccountSettings({
             </div>
           </div>
         )}
-        
+
         {activeTab === "privacy" && (
           <div className="space-y-4">
             <h4 className="font-medium text-[var(--app-foreground)]">
@@ -278,7 +291,7 @@ export default function AccountSettings({
             </div>
           </div>
         )}
-        
+
         <div className="flex justify-end">
           <Button
             variant="primary"
