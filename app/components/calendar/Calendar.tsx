@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, Icon } from "../DemoComponents";
 import CalendarEvent from "./CalendarEvent";
 
@@ -53,23 +53,23 @@ export default function Calendar({
   const generateCalendarDays = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-    
+
     const daysInMonth = getDaysInMonth(year, month);
     const firstDayOfMonth = getFirstDayOfMonth(year, month);
-    
+
     const days = [];
-    
+
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push({ day: 0, date: null });
     }
-    
+
     // Add days of the month
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(year, month, i);
       days.push({ day: i, date });
     }
-    
+
     return days;
   };
 
@@ -139,7 +139,7 @@ export default function Calendar({
   // Get events for a specific date
   const getEventsForDate = (date: Date | null) => {
     if (!date) return [];
-    
+
     return events.filter(
       (event) =>
         event.date.getDate() === date.getDate() &&
@@ -179,7 +179,7 @@ export default function Calendar({
           </Button>
         </div>
       </div>
-      
+
       <div className="p-4">
         {/* Calendar grid */}
         <div className="grid grid-cols-7 gap-1 mb-4">
@@ -192,7 +192,7 @@ export default function Calendar({
               {day}
             </div>
           ))}
-          
+
           {/* Calendar days */}
           {calendarDays.map((day, index) => {
             const isToday =
@@ -200,16 +200,16 @@ export default function Calendar({
               day.date.getDate() === new Date().getDate() &&
               day.date.getMonth() === new Date().getMonth() &&
               day.date.getFullYear() === new Date().getFullYear();
-              
+
             const isSelected =
               selectedDate &&
               day.date &&
               day.date.getDate() === selectedDate.getDate() &&
               day.date.getMonth() === selectedDate.getMonth() &&
               day.date.getFullYear() === selectedDate.getFullYear();
-              
+
             const dayEvents = day.date ? getEventsForDate(day.date) : [];
-            
+
             return (
               <div
                 key={index}
@@ -253,7 +253,7 @@ export default function Calendar({
             );
           })}
         </div>
-        
+
         {/* Selected date events */}
         {selectedDate && (
           <div className="mt-4 border-t border-[var(--app-card-border)] pt-4">
@@ -274,7 +274,7 @@ export default function Calendar({
                 Add Event
               </Button>
             </div>
-            
+
             {/* Event form */}
             {showEventForm && (
               <div className="mb-4 p-3 border border-[var(--app-card-border)] rounded-lg bg-[var(--app-background)]">
@@ -374,7 +374,7 @@ export default function Calendar({
                 </div>
               </div>
             )}
-            
+
             {/* Events list */}
             <div className="space-y-2">
               {getEventsForDate(selectedDate).length > 0 ? (
