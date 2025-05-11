@@ -1,4 +1,4 @@
-[![Productivity Sketch UI Kits | Sketch ...](https://images.openai.com/thumbnails/81bb63b5603dc8a92fbca3a314642c4a.jpeg)](https://sketchelements.com/ui-kits/productivity/)
+[!image](public/logo.png)
 
 Here's a detailed `README.md` for your project [Qwest](https://github.com/oumaoumag/Qwest), incorporating its purpose, features, technologies, setup instructions, and more.
 
