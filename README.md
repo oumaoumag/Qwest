@@ -1,11 +1,11 @@
-# MiniKit Template
+# Qwest
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-onchain --mini`](), configured with:
+This is a [Next.js](https://nextjs.org) project built with [MiniKit](https://docs.base.org/builderkits/minikit/overview), configured with:
 
-- [MiniKit](https://docs.base.org/builderkits/minikit/overview)
-- [OnchainKit](https://www.base.org/builders/onchainkit)
-- [Tailwind CSS](https://tailwindcss.com)
-- [Next.js](https://nextjs.org/docs)
+- [MiniKit](https://docs.base.org/builderkits/minikit/overview) - Base's UI toolkit for Farcaster Frames
+- [OnchainKit](https://www.base.org/builders/onchainkit) - Base's toolkit for building onchain apps
+- [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS framework
+- [Next.js](https://nextjs.org/docs) - React framework for production
 
 ## Getting Started
 
@@ -20,15 +20,9 @@ pnpm install
 bun install
 ```
 
-2. Verify environment variables, these will be set up by the `npx create-onchain --mini` command:
+2. Verify environment variables:
 
 You can regenerate the FARCASTER Account Association environment variables by running `npx create-onchain --manifest` in your project directory.
-
-The environment variables enable the following features:
-
-- Frame metadata - Sets up the Frame Embed that will be shown when you cast your frame
-- Account association - Allows users to add your frame to their account, enables notifications
-- Redis API keys - Enable Webhooks and background notifications for your application by storing users notification details
 
 ```bash
 # Required for Frame metadata
@@ -55,7 +49,13 @@ REDIS_TOKEN=
 npm run dev
 ```
 
-## Template Features
+## Features
+
+### Daily Planner
+- Create and manage time blocks for your day
+- Categorize activities (work, personal, health, learning, social)
+- Track completion status of tasks
+- Edit and delete time blocks
 
 ### Frame Configuration
 - `.well-known/farcaster.json` endpoint configured for Frame metadata and account association
@@ -64,37 +64,10 @@ npm run dev
 ### Background Notifications
 - Redis-backed notification system using Upstash
 - Ready-to-use notification endpoints in `api/notify` and `api/webhook`
-- Notification client utilities in `lib/notification-client.ts`
 
 ### Theming
-- Custom theme defined in `theme.css` with OnchainKit variables
-- Pixel font integration with Pixelify Sans
+- Custom theme with OnchainKit variables
 - Dark/light mode support through OnchainKit
-
-### MiniKit Provider
-The app is wrapped with `MiniKitProvider` in `providers.tsx`, configured with:
-- OnchainKit integration
-- Access to Frames context
-- Sets up Wagmi Connectors
-- Sets up Frame SDK listeners
-- Applies Safe Area Insets
-
-## Customization
-
-To get started building your own frame, follow these steps:
-
-1. Remove the DemoComponents:
-   - Delete `components/DemoComponents.tsx`
-   - Remove demo-related imports from `page.tsx`
-
-2. Start building your Frame:
-   - Modify `page.tsx` to create your Frame UI
-   - Update theme variables in `theme.css`
-   - Adjust MiniKit configuration in `providers.tsx`
-
-3. Add your frame to your account:
-   - Cast your frame to see it in action
-   - Share your frame with others to start building your community
 
 ## Learn More
 
