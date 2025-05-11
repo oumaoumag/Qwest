@@ -37,11 +37,11 @@ export default function TaskList({
   const handleAddTask = (task: Task) => {
     const newTasks = [...tasks, task];
     setTasks(newTasks);
-    
+
     if (onAddTask) {
       onAddTask(task);
     }
-    
+
     setShowForm(false);
   };
 
@@ -51,7 +51,7 @@ export default function TaskList({
       task.id === updatedTask.id ? updatedTask : task
     );
     setTasks(newTasks);
-    
+
     if (onUpdateTask) {
       onUpdateTask(updatedTask);
     }
@@ -61,7 +61,7 @@ export default function TaskList({
   const handleDeleteTask = (taskId: string) => {
     const newTasks = tasks.filter((task) => task.id !== taskId);
     setTasks(newTasks);
-    
+
     if (onDeleteTask) {
       onDeleteTask(taskId);
     }
@@ -70,13 +70,13 @@ export default function TaskList({
   // Toggle task completion
   const handleToggleComplete = (taskId: string) => {
     const taskToUpdate = tasks.find((task) => task.id === taskId);
-    
+
     if (taskToUpdate) {
       const updatedTask = {
         ...taskToUpdate,
         completed: !taskToUpdate.completed,
       };
-      
+
       handleUpdateTask(updatedTask);
     }
   };
@@ -96,16 +96,16 @@ export default function TaskList({
       if (!b.dueDate) return -1;
       return a.dueDate.getTime() - b.dueDate.getTime();
     }
-    
+
     if (sortBy === "priority") {
       const priorityValues = { high: 0, medium: 1, low: 2 };
       return priorityValues[a.priority] - priorityValues[b.priority];
     }
-    
+
     if (sortBy === "title") {
       return a.title.localeCompare(b.title);
     }
-    
+
     return 0;
   });
 
@@ -124,14 +124,14 @@ export default function TaskList({
           Add Task
         </Button>
       </div>
-      
+
       {/* Task form */}
       {showForm && (
         <div className="p-4 border-b border-[var(--app-card-border)]">
           <TaskForm onSubmit={handleAddTask} onCancel={() => setShowForm(false)} />
         </div>
       )}
-      
+
       {/* Filters and sorting */}
       <div className="px-4 py-2 border-b border-[var(--app-card-border)] flex justify-between items-center">
         <div className="flex space-x-2">
@@ -172,7 +172,7 @@ export default function TaskList({
           </label>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as "dueDate" | "priority" | "title")}
             className="text-xs bg-[var(--app-background)] border border-[var(--app-card-border)] rounded-md px-2 py-1 text-[var(--app-foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--app-accent)]"
           >
             <option value="dueDate">Due Date</option>
@@ -181,7 +181,7 @@ export default function TaskList({
           </select>
         </div>
       </div>
-      
+
       {/* Task list */}
       <div className="p-4">
         {sortedTasks.length > 0 ? (
@@ -208,7 +208,7 @@ export default function TaskList({
           </div>
         )}
       </div>
-      
+
       {/* Task summary */}
       <div className="px-4 py-2 border-t border-[var(--app-card-border)] text-xs text-[var(--app-foreground-muted)]">
         <div className="flex justify-between">
