@@ -24,7 +24,7 @@ export default function ProductivityHub() {
     if (hasCompletedOnboarding === "true") {
       setShowOnboarding(false);
     }
-    
+
     const savedUserName = localStorage.getItem("userName");
     if (savedUserName) {
       setUserName(savedUserName);
@@ -34,7 +34,7 @@ export default function ProductivityHub() {
   // Handle onboarding completion
   const handleOnboardingComplete = () => {
     localStorage.setItem("hasCompletedOnboarding", "true");
-    
+
     // Save user name if available from onboarding
     const savedUserData = localStorage.getItem("userData");
     if (savedUserData) {
@@ -48,17 +48,17 @@ export default function ProductivityHub() {
         console.error("Error parsing user data:", error);
       }
     }
-    
+
     setShowOnboarding(false);
   };
 
   // Handle user profile update
-  const handleProfileUpdate = (userData: any) => {
+  const handleProfileUpdate = (userData: { name?: string;[key: string]: unknown }) => {
     if (userData.name) {
       setUserName(userData.name);
       localStorage.setItem("userName", userData.name);
     }
-    
+
     localStorage.setItem("userData", JSON.stringify(userData));
   };
 
@@ -130,10 +130,10 @@ export default function ProductivityHub() {
                   Welcome back, {userName}! 👋
                 </h2>
                 <p className="text-[var(--app-foreground-muted)]">
-                  Here's your productivity hub. Track tasks, manage your schedule, and stay focused.
+                    Here&apos;s your productivity hub. Track tasks, manage your schedule, and stay focused.
                 </p>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   {/* <AIAssistant userName={userName} /> */}
@@ -142,9 +142,9 @@ export default function ProductivityHub() {
                   <TaskList />
                 </div>
               </div>
-              
+
               <DailyPlanner />
-              
+
               <div className="flex justify-center">
                 <Button
                   variant="outline"
