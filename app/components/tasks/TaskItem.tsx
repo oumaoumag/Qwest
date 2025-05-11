@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Icon } from "../DemoComponents";
+import { Icon } from "../DemoComponents";
 import { Task } from "./TaskList";
 import TaskForm from "./TaskForm";
 
@@ -49,16 +49,16 @@ export default function TaskItem({
   // Format due date
   const formatDueDate = (date?: Date) => {
     if (!date) return "No due date";
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    
+
     const taskDate = new Date(date);
     taskDate.setHours(0, 0, 0, 0);
-    
+
     if (taskDate.getTime() === today.getTime()) {
       return "Today";
     } else if (taskDate.getTime() === tomorrow.getTime()) {
@@ -103,13 +103,13 @@ export default function TaskItem({
   // Check if task is overdue
   const isOverdue = () => {
     if (!task.dueDate) return false;
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const taskDate = new Date(task.dueDate);
     taskDate.setHours(0, 0, 0, 0);
-    
+
     return taskDate < today && !task.completed;
   };
 
@@ -141,7 +141,7 @@ export default function TaskItem({
             />
           )}
         </button>
-        
+
         <div className="flex-1">
           <div className="flex items-center">
             <span
@@ -160,7 +160,7 @@ export default function TaskItem({
               {task.title}
             </h4>
           </div>
-          
+
           {task.dueDate && (
             <div
               className={`text-xs ${
@@ -174,7 +174,7 @@ export default function TaskItem({
             </div>
           )}
         </div>
-        
+
         <div className="flex items-center space-x-1">
           {!isEditing && (
             <>
@@ -227,7 +227,7 @@ export default function TaskItem({
           )}
         </div>
       </div>
-      
+
       {isExpanded && (
         <div className="px-3 py-2 bg-[var(--app-background)]">
           {isEditing ? (
@@ -244,7 +244,7 @@ export default function TaskItem({
                   {task.description}
                 </p>
               )}
-              
+
               {task.tags && task.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {task.tags.map((tag, index) => (
