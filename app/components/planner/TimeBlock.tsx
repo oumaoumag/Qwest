@@ -27,16 +27,18 @@ export default function TimeBlock({
     return `${formattedHour}:${minutes} ${period}`;
   };
 
-  // Calculate duration in minutes
+  // Calculate duration in minutes (commented out as currently unused)
+  /*
   const calculateDuration = () => {
     const [startHours, startMinutes] = item.startTime.split(":").map(Number);
     const [endHours, endMinutes] = item.endTime.split(":").map(Number);
-    
+
     const startTotalMinutes = startHours * 60 + startMinutes;
     const endTotalMinutes = endHours * 60 + endMinutes;
-    
+
     return endTotalMinutes - startTotalMinutes;
   };
+  */
 
   // Get category color
   const getCategoryColor = () => {
@@ -159,7 +161,7 @@ export default function TimeBlock({
           </button>
         </div>
       </div>
-      
+
       {isExpanded && item.description && (
         <div className="px-2 py-1 text-xs border-t border-current bg-white bg-opacity-50">
           {item.description}
