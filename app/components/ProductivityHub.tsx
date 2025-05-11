@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Layout from "./common/Layout";
 import OnboardingFlow from "./auth/OnboardingFlow";
 import UserProfile from "./auth/UserProfile";
+import AccountSettings from "./auth/AccountSettings";
 import Calendar from "./calendar/Calendar";
 import TaskList from "./tasks/TaskList";
 import DailyPlanner from "./planner/DailyPlanner";
@@ -13,12 +14,12 @@ import { Button, Icon } from "./DemoComponents";
 
 export default function ProductivityHub() {
   const [activeTab, setActiveTab] = useState<
-    "dashboard" | "calendar" | "tasks" | "planner" | "profile" | "feedback"
+    "dashboard" | "calendar" | "tasks" | "planner" | "profile" | "settings" | "feedback"
   >("dashboard");
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [userName, setUserName] = useState("User");
 
-  // Check if user has completed onboarding
+  // Check if user has completed onboarding and load saved data
   useEffect(() => {
     const hasCompletedOnboarding = localStorage.getItem("hasCompletedOnboarding");
     if (hasCompletedOnboarding === "true") {
@@ -28,6 +29,17 @@ export default function ProductivityHub() {
     const savedUserName = localStorage.getItem("userName");
     if (savedUserName) {
       setUserName(savedUserName);
+    }
+
+    // Load any saved settings (not used directly in this component but good practice)
+    const savedSettings = localStorage.getItem("accountSettings");
+    if (savedSettings) {
+      try {
+        JSON.parse(savedSettings);
+        // Settings are loaded by the AccountSettings component
+      } catch (error) {
+        console.error("Error parsing account settings:", error);
+      }
     }
   }, []);
 
@@ -60,6 +72,11 @@ export default function ProductivityHub() {
     }
 
     localStorage.setItem("userData", JSON.stringify(userData));
+  };
+
+  // Handle account settings update
+  const handleSettingsUpdate = (settings: unknown) => {
+    localStorage.setItem("accountSettings", JSON.stringify(settings));
   };
 
   return (
@@ -120,6 +137,15 @@ export default function ProductivityHub() {
             >
               Profile
             </button>
+              <button
+                className={`px-4 py-2 text-sm font-medium whitespace-nowrap ${activeTab === "settings"
+                  ? "text-[var(--app-accent)] border-b-2 border-[var(--app-accent)]"
+                  : "text-[var(--app-foreground-muted)] hover:text-[var(--app-foreground)]"
+                  }`}
+                onClick={() => setActiveTab("settings")}
+              >
+                Settings
+              </button>
           </div>
 
           {/* Dashboard */}
@@ -171,6 +197,11 @@ export default function ProductivityHub() {
           {activeTab === "profile" && (
             <UserProfile onSave={handleProfileUpdate} />
           )}
+
+            {/* Settings */}
+            {activeTab === "settings" && (
+              <AccountSettings onSave={handleSettingsUpdate} />
+            )}
 
           {/* Feedback */}
           {activeTab === "feedback" && (
