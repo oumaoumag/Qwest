@@ -1,4 +1,4 @@
-https://github.com/oumaoumag/Qwest/blob/main/public/logo.png
+<img src="https://github.com/oumaoumag/Qwest/blob/main/public/logo.png" alt="logo">
 
 Here's a detailed `README.md` for your project [Qwest](https://github.com/oumaoumag/Qwest), incorporating its purpose, features, technologies, setup instructions, and more.
 
