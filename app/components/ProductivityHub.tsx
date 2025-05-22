@@ -8,7 +8,7 @@ import AccountSettings from "./auth/AccountSettings";
 import Calendar from "./calendar/Calendar";
 import TaskList from "./tasks/TaskList";
 import DailyPlanner from "./planner/DailyPlanner";
-// import AIAssistant from "./assistant/AIAssistant";
+import AIAssistant from "./assistant/aiagent";
 import FeedbackForm from "./feedback/FeedbackForm";
 import { Button, Icon } from "./DemoComponents";
 
@@ -22,20 +22,17 @@ export default function ProductivityHub() {
   // Check if user has completed onboarding and load saved data
   useEffect(() => {
     const hasCompletedOnboarding = localStorage.getItem("hasCompletedOnboarding");
-    if (hasCompletedOnboarding === "true") {
-      setShowOnboarding(false);
-    }
-
+    if (hasCompletedOnboarding === "true") setShowOnboarding(false);
+  
     const savedUserName = localStorage.getItem("userName");
-    if (savedUserName) {
-      setUserName(savedUserName);
-    }
+    if (savedUserName) setUserName(savedUserName);
 
     // Load any saved settings (not used directly in this component but good practice)
     const savedSettings = localStorage.getItem("accountSettings");
     if (savedSettings) {
       try {
         JSON.parse(savedSettings);
+
         // Settings are loaded by the AccountSettings component
       } catch (error) {
         console.error("Error parsing account settings:", error);
@@ -60,7 +57,6 @@ export default function ProductivityHub() {
         console.error("Error parsing user data:", error);
       }
     }
-
     setShowOnboarding(false);
   };
 
@@ -70,7 +66,6 @@ export default function ProductivityHub() {
       setUserName(userData.name);
       localStorage.setItem("userName", userData.name);
     }
-
     localStorage.setItem("userData", JSON.stringify(userData));
   };
 
@@ -162,7 +157,7 @@ export default function ProductivityHub() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  {/* <AIAssistant userName={userName} /> */}
+                  <AIAssistant />
                 </div>
                 <div>
                   <TaskList />
@@ -189,24 +184,17 @@ export default function ProductivityHub() {
           {/* Tasks */}
           {activeTab === "tasks" && <TaskList />}
 
-
           {/* Daily Planner */}
           {activeTab === "planner" && <DailyPlanner />}
 
           {/* Profile */}
-          {activeTab === "profile" && (
-            <UserProfile onSave={handleProfileUpdate} />
-          )}
+          {activeTab === "profile" && <UserProfile onSave={handleProfileUpdate} />}
 
             {/* Settings */}
-            {activeTab === "settings" && (
-              <AccountSettings onSave={handleSettingsUpdate} />
-            )}
+            {activeTab === "settings" && <AccountSettings onSave={handleSettingsUpdate} />}
 
           {/* Feedback */}
-          {activeTab === "feedback" && (
-            <FeedbackForm onClose={() => setActiveTab("dashboard")} />
-          )}
+          {activeTab === "feedback" && <FeedbackForm onClose={() => setActiveTab("dashboard")} /> }
         </div>
       )}
     </Layout>
