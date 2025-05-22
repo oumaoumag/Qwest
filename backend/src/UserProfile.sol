@@ -10,5 +10,5 @@ contract UserProfile {
 
     mapping(address => User) public users;
 
-
+    event UserRegistered(address indexed user, string encryptedName);
 }
