@@ -1,9 +1,5 @@
 <img src="https://github.com/oumaoumag/Qwest/blob/main/public/logo.png" alt="logo">
 
-Here's a detailed `README.md` for your project [Qwest](https://github.com/oumaoumag/Qwest), incorporating its purpose, features, technologies, setup instructions, and more.
-
----
-
 # Qwest
 
 **Qwest** is your smart, all-in-one productivity hub. Plan your goals, track habits, journal, and manage tasks — guided by an AI assistant that keeps you focused and in flow. Designed for students, creators, and professionals, Qwest helps you stay intentional, organized, and ready for every day.
