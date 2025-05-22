@@ -29,3 +29,17 @@ contract UserProfile {
         users[_user].badges.push(_badge);
     }
 }
+
+contract TaskManager {
+    UserProfile public userProfile;
+
+    sruct Task {
+        uint256 taskId;
+        address owner;
+        bool completed;
+        string dataHash; //  Hash of offchain data for intedrity
+        string cid;      //  IPFS CID for offchain data
+    }  
+
+    
+}
