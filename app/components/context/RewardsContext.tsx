@@ -20,3 +20,11 @@ export function RewardsProvider({ children }: { children: React.ReactNode }) {
         </RewardsContext.Provider>
     );
 }
+
+export function useRewards() {
+    const context = useContext(RewardsContext);
+    if (context === undefined) {
+        throw new Error("userRewards must be used within a RewardsProvider");
+    }
+    return context;
+}
