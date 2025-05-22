@@ -43,5 +43,8 @@ contract TaskManager {
 
     mapping(uint256 => Task) public tasks;
     uint256 public taskCount;
+
+    event TaskCreated(uint256 indexed taskId, address indexed owner, string cid);
+    event TaskCompleted(uint256 indexed taskId, address indexed owner);
     
 }
