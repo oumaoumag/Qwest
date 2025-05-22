@@ -1,5 +1,8 @@
 "use client";
 
+import { ethers } from 'ethers';
+import { uploadToIPFS } from '@pinata/sdk';
+import TaskManagerABI from '../../abis/TaskManager.json';
 import { useState } from "react";
 import { Button, Icon } from "../DemoComponents";
 import TaskItem from "./TaskItem";
@@ -8,6 +11,7 @@ import { useRewards } from "../context/RewardsContext";
 import { useToast } from "../context/ToastContext";
 import { showCallsStatusMutationOptions } from "wagmi/query";
 
+const TASK_MANAGER_ADDRESS = 'CONTRACT_ADDRESS';
 export type Task = {
   id: string;
   title: string;
