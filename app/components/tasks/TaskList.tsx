@@ -43,16 +43,14 @@ export default function TaskList({
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   const [sortBy, setSortBy] = useState<"dueDate" | "priority" | "title">("dueDate");
+  const { addPoints } = useRewards();
+  const { showToast } = useToast();
 
   // Add a new task
   const handleAddTask = (task: Task) => {
     const newTasks = [...tasks, task];
     setTasks(newTasks);
-
-    if (onAddTask) {
-      onAddTask(task);
-    }
-
+    if (onAddTask) onAddTask(task);
     setShowForm(false);
   };
 
@@ -63,9 +61,7 @@ export default function TaskList({
     );
     setTasks(newTasks);
 
-    if (onUpdateTask) {
-      onUpdateTask(updatedTask);
-    }
+    if (onUpdateTask) onUpdateTask(updatedTask);
   };
 
   // Delete a task
