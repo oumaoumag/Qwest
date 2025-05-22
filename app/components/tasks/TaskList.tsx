@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Button, Icon } from "../DemoComponents";
 import TaskItem from "./TaskItem";
 import TaskForm from "./TaskForm";
+import { useRewards } from "../context/RewardsContext";
+import { useToast } from "../context/ToastContext";
 
 export type Task = {
   id: string;
@@ -12,8 +14,11 @@ export type Task = {
   completed: boolean;
   dueDate?: Date;
   priority: "low" | "medium" | "high";
+  category: "work" | "personal" | "health" | "learning" | "social" | "other";
   tags?: string[];
 };
+
+
 
 type TaskListProps = {
   initialTasks?: Task[];
