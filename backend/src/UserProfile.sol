@@ -46,5 +46,11 @@ contract TaskManager {
 
     event TaskCreated(uint256 indexed taskId, address indexed owner, string cid);
     event TaskCompleted(uint256 indexed taskId, address indexed owner);
+
+    constructor(address _userProfileAddress) {
+        userProfile = UserProfile(_userProfileAddress);
+    }
+
+    
     
 }
