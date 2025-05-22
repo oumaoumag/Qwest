@@ -18,7 +18,13 @@ export type Task = {
   tags?: string[];
 };
 
-
+const encouragementMessages = [
+  "Great job! Keep up the momentum.",
+  "You're on a roll! What's next?",
+  "Nice work! Your're making progress.",
+  "Awesome! You're crushing your goals.",
+  "Well dobe! Every step counts.",
+];
 
 type TaskListProps = {
   initialTasks?: Task[];
