@@ -245,15 +245,17 @@ const handleToggleComplete = async (taskId: string) => {
 
       {/* Task list */}
       <div className="p-4">
-        {sortedTasks.length > 0 ? (
+        {loading ? (
+          <p className="text-center text-[var(--app-foreground-muted)]">Loading tasks...</p>
+        ) : sortedTasks.length > 0 ? (
           <ul className="space-y-2">
             {sortedTasks.map((task) => (
               <TaskItem
                 key={task.id}
                 task={task}
                 onToggleComplete={handleToggleComplete}
-                onUpdate={handleUpdateTask}
-                onDelete={handleDeleteTask}
+                onUpdate={() => {}} // TOD0: implement
+                onDelete={() => {}} // TOD0: implement
               />
             ))}
           </ul>
@@ -273,12 +275,8 @@ const handleToggleComplete = async (taskId: string) => {
       {/* Task summary */}
       <div className="px-4 py-2 border-t border-[var(--app-card-border)] text-xs text-[var(--app-foreground-muted)]">
         <div className="flex justify-between">
-          <span>
-            {tasks.filter((task) => !task.completed).length} active tasks
-          </span>
-          <span>
-            {tasks.filter((task) => task.completed).length} completed
-          </span>
+          <span>{tasks.filter((task) => !task.completed).length} active tasks</span>
+          <span>{tasks.filter((task) => task.completed).length} completed</span>
         </div>
       </div>
     </div>
