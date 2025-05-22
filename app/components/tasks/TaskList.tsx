@@ -6,6 +6,7 @@ import TaskItem from "./TaskItem";
 import TaskForm from "./TaskForm";
 import { useRewards } from "../context/RewardsContext";
 import { useToast } from "../context/ToastContext";
+import { showCallsStatusMutationOptions } from "wagmi/query";
 
 export type Task = {
   id: string;
@@ -77,16 +78,21 @@ export default function TaskList({
   // Toggle task completion
   const handleToggleComplete = (taskId: string) => {
     const taskToUpdate = tasks.find((task) => task.id === taskId);
-
     if (taskToUpdate) {
-      const updatedTask = {
-        ...taskToUpdate,
-        completed: !taskToUpdate.completed,
-      };
+      const updatedTask = { ...taskToUpdate, completed: !taskToUpdate.completed };
+      const newTasks = tasks.map((task) => 
+        task.id === taskId ? updatedTask : task
+    );
+    setTasks(newTasks);
+    if (onUpdateTask) onUpdateTask(updatedTask);
 
-      handleUpdateTask(updatedTask);
+    if (!taskToUpdate.completed) {
+      addPoints(10); // Award 10 points
+      const randomMessage = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
+      showToast(randomMessage);
     }
-  };
+  }
+};
 
   // Filter tasks
   const filteredTasks = tasks.filter((task) => {
@@ -108,11 +114,7 @@ export default function TaskList({
       const priorityValues = { high: 0, medium: 1, low: 2 };
       return priorityValues[a.priority] - priorityValues[b.priority];
     }
-
-    if (sortBy === "title") {
-      return a.title.localeCompare(b.title);
-    }
-
+    if (sortBy === "title") return a.title.localeCompare(b.title);
     return 0;
   });
 
