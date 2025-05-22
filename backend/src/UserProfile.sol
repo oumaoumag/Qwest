@@ -17,4 +17,8 @@ contract UserProfile {
         users[msg.sender] = User(_encryptedName, 0, new string[](0));
         emit UserRegistered(msg.sender, _encryptedName);
     }
+
+    function updatePoints(address _user, uint256 _points) external {
+        users[_user].points += _points;
+    }
 }
