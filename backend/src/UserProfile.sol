@@ -7,4 +7,8 @@ contract UserProfile {
         uint256 points;
         string[] badges;
     }
+
+    mapping(address => User) public users;
+
+
 }
