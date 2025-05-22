@@ -41,5 +41,7 @@ contract TaskManager {
         string cid;      //  IPFS CID for offchain data
     }  
 
+    mapping(uint256 => Task) public tasks;
+    uint256 public taskCount;
     
 }
