@@ -7,29 +7,19 @@ type ToastContextType = {
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
 
-    const showToast = (message: string) => {
-        setToastMessage(message);
-        setTimeout(() => setToastMessage(null), 3000); 
+    const showToast = (msg: string) => {
+        setMessage(msg);
+        setTimeout(() => setMessage(null), 3000); 
     };
 
     return (
         <ToastContext.Provider value={{ showToast }}>
         {children}
-        {toastMessage && (
-            <div className="fixed bottom-4 left-1/2 transform-translate-x-1/2 bg-[var(--app-accent)] text-white px-4 py-2 rounded-lg shadow-lg">
-                {toastMessage}
-            </div>
-        )}
+        {message && <div className="toast">{message}</div>}
         </ToastContext.Provider>
     );
 }
 
-export function useToast() {
-    const context = useContext(ToastContext);
-    if (context === undefined) {
-        throw new Error("useToast must be used within a ToastProvider");
-    }
-    return context;
-}
+export const useToast = () => useContext(ToastContext);
