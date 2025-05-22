@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ethers } from 'ethers';
+import { keccak256, toUtf8Bytes } from 'ethers/lib/utils';
 import { useAccount, useSigner } from "wagmi";
 import { uploadToIPFS } from '../utils/ipfs';
 import TaskManagerABI from '../../abis/TaskManager.json';
@@ -104,7 +105,7 @@ export default function TaskList() {
       category: task.category,
       tags: task.tags,
     };
-    const cid = await uploadToIPFS(taskData); // Upload to IPFS
+    const dataHash = keccak256(toUtf8Bytes(JSON.stringify(taskData)));
     const dataHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(JSON.stringify(taskData)));
     const contract = new ethers.Contract(TASK_MANAGER_ADDRESS, TaskManagerABI, signer);
     const tx = await contract.createTask(dataHash, cid); // Call Smart Contract
