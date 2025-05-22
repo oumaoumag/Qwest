@@ -12,16 +12,19 @@ contract UserProfile {
 
     event UserRegistered(address indexed user, string encryptedName);
 
+    // User Registration
     function registered(string memory _encryptedName) extenal {
         require(bytes(users[msg.sender].encryptedName).length == 0, "User already registered");
         users[msg.sender] = User(_encryptedName, 0, new string[](0));
         emit UserRegistered(msg.sender, _encryptedName);
     }
 
+    // Modifies user points
     function updatePoints(address _user, uint256 _points) external {
         users[_user].points += _points;
     }
 
+    // Badge Management - 
     function addBadge(address _user, uint256 _points) external {
         users[_user].badges.push(_badge);
     }
