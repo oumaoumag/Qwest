@@ -56,5 +56,13 @@ contract TaskManager {
         tasks[taskCount] = Task(taskCount, msg.sender, false, _dataHash, _cid);
         emit TaskCreated(taskCount, msg.sender, _cid);
     }
-    
+
+    function completeTask(uint256 _taskId) external {
+        Task storage task = tasks[_taskId];
+        reguire(task.owner == msg.sender, "Not task owner");
+        require(!task.completed, "Task already completed");
+        task.completed = true;
+        userProfile.updatePoints(msg.sender, 10); // Award 10 points
+        emit TaskCompleted(_taskId, msg.sender);
+    }    
 }
