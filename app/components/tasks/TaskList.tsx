@@ -1,17 +1,20 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { ethers } from 'ethers';
-import { uploadToIPFS } from '@pinata/sdk';
+import { useAccount, useSigner } from "wagmi";
+import { uploadToIPFS } from '../utils/ipfs';
 import TaskManagerABI from '../../abis/TaskManager.json';
-import { useState } from "react";
 import { Button, Icon } from "../DemoComponents";
 import TaskItem from "./TaskItem";
 import TaskForm from "./TaskForm";
 import { useRewards } from "../context/RewardsContext";
 import { useToast } from "../context/ToastContext";
-import { showCallsStatusMutationOptions } from "wagmi/query";
+import { setBlockGasLimit } from "viem/actions";
+import { randomFill } from 'crypto';
 
 const TASK_MANAGER_ADDRESS = 'CONTRACT_ADDRESS';
+
 export type Task = {
   id: string;
   title: string;
@@ -31,74 +34,119 @@ const encouragementMessages = [
   "Well dobe! Every step counts.",
 ];
 
-type TaskListProps = {
-  initialTasks?: Task[];
-  onAddTask?: (task: Task) => void;
-  onUpdateTask?: (task: Task) => void;
-  onDeleteTask?: (taskId: string) => void;
-};
+// type TaskListProps = {
+//   initialTasks?: Task[];
+//   onAddTask?: (task: Task) => void;
+//   onUpdateTask?: (task: Task) => void;
+//   onDeleteTask?: (taskId: string) => void;
+// };
 
-export default function TaskList({
-  initialTasks = [],
-  onAddTask,
-  onUpdateTask,
-  onDeleteTask,
-}: TaskListProps) {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+export default function TaskList() {
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   const [sortBy, setSortBy] = useState<"dueDate" | "priority" | "title">("dueDate");
-  const { addPoints } = useRewards();
-  const { showToast } = useToast();
+  const [loading, setLoading] = useState(false);
+
+  const { address } = useAccount(); // Get user's wallet address
+  const { data: signer } = useSigner(); // GEt signer for transactions
+  const { showToast } = useToast();     // For notifications
+
+  // Fetch tasks from the blockchain
+  const fetchTasks = async () => {
+    if (!address || !signer) return;
+    setLoading(true);
+    try {
+      const contract = new ethers.Contract(TASK_MANAGER_ADDRESS, TaskManagerABI, signer);
+      const taskIds = await contract.getUserTasks(address); 
+      const fetchedTasks = await Promise.all(
+        taskIds.map(async (id: string) => {
+          const task = await contract.task(id);          // Fetch task metadata
+          const response = await fetch(`https://ipfs.io/ipfs/${taskIds.cid}`);
+          const taskData = await response.json();
+          return {
+            id: id.toString(),
+            ...taskData,
+            completed: task.completed,
+            dueData: task.dueData ? new Date(task.dueDate * 1000) : undefined,
+            priority: task.priority || "medium", // Default if not stored
+            category: task.category || "other", // Default if not stored
+        }; 
+      })
+    );
+    setTasks(fetchedTasks);
+    } catch (error) {
+      console.error("Failed to fetch tasks:", error);
+      showToast("Failed to load tasks");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load taks when wallet connects or signer  changes
+  useEffect(() => {
+    fetchTasks();
+  }, [address, signer]);
 
   // Add a new task
-  const handleAddTask = (task: Task) => {
-    const newTasks = [...tasks, task];
-    setTasks(newTasks);
-    if (onAddTask) onAddTask(task);
+  const handleAddTask =  async(task: Task) => {
+   if (!signer) {
+   showToast("Please connect your waller");
+   return;
+  };
+  setLoading(true)
+  try {
+    const taskData = {
+      title: task.title,
+      description: task.description || "",
+      dueData: task.dueDate ? Math.floor(task.dueDate.getTime() / 1000) : undefined,
+      priority: task.priority,
+      category: task.category,
+      tags: task.tags,
+    };
+    const cid = await uploadToIPFS(taskData); // Upload to IPFS
+    const dataHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(JSON.stringify(taskData)));
+    const contract = new ethers.Contract(TASK_MANAGER_ADDRESS, TaskManagerABI, signer);
+    const tx = await contract.createTask(dataHash, cid); // Call Smart Contract
+    await tx.await();
+    showToast("Task created successfully!");
+    fetchTasks();  // Refresh task list
     setShowForm(false);
-  };
-
-  // Update a task
-  const handleUpdateTask = (updatedTask: Task) => {
-    const newTasks = tasks.map((task) =>
-      task.id === updatedTask.id ? updatedTask : task
-    );
-    setTasks(newTasks);
-
-    if (onUpdateTask) onUpdateTask(updatedTask);
-  };
-
-  // Delete a task
-  const handleDeleteTask = (taskId: string) => {
-    const newTasks = tasks.filter((task) => task.id !== taskId);
-    setTasks(newTasks);
-
-    if (onDeleteTask) {
-      onDeleteTask(taskId);
-    }
-  };
-
-  // Toggle task completion
-  const handleToggleComplete = (taskId: string) => {
-    const taskToUpdate = tasks.find((task) => task.id === taskId);
-    if (taskToUpdate) {
-      const updatedTask = { ...taskToUpdate, completed: !taskToUpdate.completed };
-      const newTasks = tasks.map((task) => 
-        task.id === taskId ? updatedTask : task
-    );
-    setTasks(newTasks);
-    if (onUpdateTask) onUpdateTask(updatedTask);
-
-    if (!taskToUpdate.completed) {
-      addPoints(10); // Award 10 points
-      const randomMessage = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
-      showToast(randomMessage);
-    }
+  } catch (error) {
+    console.error("Failed to create task:", error);
+    showToast("Failed to create task");
+  } finally {
+    setLoading(false);
   }
 };
 
-  // Filter tasks
+// Toggle task completion
+const handleToggleComplete = async (taskId: string) => {
+  if (!signer) {
+    showToast("Please connect your wallet");
+    return;
+  }
+  setLoading(true);
+  try {
+    const taskToUpdate = tasks.find((task) => task.id === taskId);
+    if (!taskToUpdate) return;
+    
+    const contract = new ethers.Contract(TASK_MANAGER_ADDRESS, TaskManagerABI, signer);
+    const tx = await contract.completeTask(taskId); // Call smart contract
+    await tx.wait();
+
+    const randomMessage = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
+    showToast(`${randomMessage} You earned 10 points.`);
+    fetchTasks(); // Refresh task list
+  } catch (error) {
+    console.error("Failed to complete task:", error);
+    showToast("Failed to complete task");
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // Filter tasks (client-side, since blockchain data is fetched)
   const filteredTasks = tasks.filter((task) => {
     if (filter === "all") return true;
     if (filter === "active") return !task.completed;
@@ -106,7 +154,7 @@ export default function TaskList({
     return true;
   });
 
-  // Sort tasks
+  // Sort tasks (client-side)
   const sortedTasks = [...filteredTasks].sort((a, b) => {
     if (sortBy === "dueDate") {
       if (!a.dueDate) return 1;
