@@ -21,4 +21,8 @@ contract UserProfile {
     function updatePoints(address _user, uint256 _points) external {
         users[_user].points += _points;
     }
+
+    function addBadge(address _user, uint256 _points) external {
+        users[_user].badges.push(_badge);
+    }
 }
