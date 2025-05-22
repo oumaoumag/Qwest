@@ -51,6 +51,10 @@ contract TaskManager {
         userProfile = UserProfile(_userProfileAddress);
     }
 
-    
+    function createTask(string memory _dataHash, string memory _cid) external {
+        taskCount++;
+        tasks[taskCount] = Task(taskCount, msg.sender, false, _dataHash, _cid);
+        emit TaskCreated(taskCount, msg.sender, _cid);
+    }
     
 }
