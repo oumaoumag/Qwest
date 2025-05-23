@@ -10,7 +10,7 @@ import { Button, Icon } from "../DemoComponents";
 import TaskItem from "./TaskItem";
 import TaskForm from "./TaskForm";
 import { useRewards } from "../context/RewardsContext";
-import { useToast } from "../context/ToastContext";
+import { showToast, useToast } from "../context/ToastContext";
 import { setBlockGasLimit } from "viem/actions";
 import { randomFill } from 'crypto';
 
@@ -25,6 +25,7 @@ export type Task = {
   priority: "low" | "medium" | "high";
   category: "work" | "personal" | "health" | "learning" | "social" | "other";
   tags?: string[];
+  cid: string; // For IPFS integration
 };
 
 const encouragementMessages = [
