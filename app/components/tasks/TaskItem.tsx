@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { useSigner } from "wagmi";
+import { uploadToIPFS } from "../utils/ipfs";
 import TaskManagerABI from "../../abis/TaskManager.json";
 import { Icon } from "../DemoComponents";
-import TaskForn from "./TaskForm";
+import TaskForm from "./TaskForm";
 import { useToast } from "../context/ToastContext";
 import { Task } from "./TaskList"
 
-const TASK_MANAGER_ADDRESS = "CONTRACT_ADDRESS"; // Replace with actual address
+const TASK_MANAGER_ADDRESS = "YOUR_CONTRACT_ADDRESS"; // Replace with actual address
 
 type TaskItemProps = {
   task: Task;
@@ -26,57 +27,26 @@ export default function TaskItem({
 }: TaskItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  
-
-  const handleToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onToggleComplete(task.id);
-  };
-
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsEditing(true);
-    setIsExpanded(true);
-  };
-
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onDelete(task.id);
-  };
-
-  const handleUpdate = (updatedTask: Task) => {
-    onUpdate(updatedTask);
-    setIsEditing(false);
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-  };
+  const [loading, setLoading] = useState(false);
+  const { data: signer } = useSigner();
+  const { showToast } = useToast();
 
   // Format due date
   const formatDueDate = (date?: Date) => {
     if (!date) return "No due date";
-
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
-
     const taskDate = new Date(date);
     taskDate.setHours(0, 0, 0, 0);
-
-    if (taskDate.getTime() === today.getTime()) {
-      return "Today";
-    } else if (taskDate.getTime() === tomorrow.getTime()) {
-      return "Tomorrow";
-    } else {
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: date.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
-      });
-    }
+    if (taskDate.getTime() === today.getTime()) return "Today";
+    else if (taskDate.getTime() === tomorrow.getTime()) return "Tomorrow";
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: date.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
+    });
   };
 
   // Get priority color
@@ -110,14 +80,80 @@ export default function TaskItem({
   // Check if task is overdue
   const isOverdue = () => {
     if (!task.dueDate) return false;
-
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     const taskDate = new Date(task.dueDate);
     taskDate.setHours(0, 0, 0, 0);
-
     return taskDate < today && !task.completed;
+  };
+
+  // Handle task update onchain
+  const handleUpdate = async (updatedTask: Task) => {
+    if (!signer) {
+      showToast("Please connect your wallet");
+      return;
+    }
+    setLoading(true);
+    try {
+      const taskData = {
+        title: updatedTask.title,
+        description: updatedTask.description || "",
+        dueDate: updatedTask.dueDate ? Math.floor(updatedTask.dueDate.getTime() / 1000) : undefined,
+        priority: updatedTask.priority,
+        category: updatedTask.category,
+        tags: updatedTask.tags,
+      };
+      const cid = await uploadToIPFS(taskData);
+      const dataHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(JSON.stringify(taskData)));
+      const contract = new ethers.Contract(TASK_MANAGER_ADDRESS, TaskManagerABI, signer);
+      const tx = await contract.updateTask(task.id, dataHash, cid); // Assumes updateTask exists
+      await tx.wait();
+      showToast("Task updated successfully!");
+      onUpdate({ ...updatedTask, cid }); // Update local state
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      showToast("Failed to update task");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle task deletion onchain
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!signer) {
+      showToast("Please connect your wallet");
+      return;
+    }
+    setLoading(true);
+    try {
+      const contract = new ethers.Contract(TASK_MANAGER_ADDRESS, TaskManagerABI, signer);
+      const tx = await contract.deleteTask(task.id); // Assumes deleteTask exists
+      await tx.wait();
+      showToast("Task deleted successfully!");
+      onDelete(task.id);
+    } catch (error) {
+      console.error("Failed to delete task:", error);
+      showToast("Failed to delete task");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleComplete(task.id);
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsEditing(true);
+    setIsExpanded(true);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
   };
 
   return (
@@ -139,13 +175,10 @@ export default function TaskItem({
               : "border-[var(--app-foreground-muted)] bg-transparent"
           }`}
           onClick={handleToggle}
+          disabled={loading}
         >
           {task.completed && (
-            <Icon
-              name="check"
-              size="sm"
-              className="text-[var(--app-background)]"
-            />
+            <Icon name="check" size="sm" className="text-[var(--app-background)]" />
           )}
         </button>
 
@@ -171,9 +204,7 @@ export default function TaskItem({
           {task.dueDate && (
             <div
               className={`text-xs ${
-                isOverdue()
-                  ? "text-red-500"
-                  : "text-[var(--app-foreground-muted)]"
+                isOverdue() ? "text-red-500" : "text-[var(--app-foreground-muted)]"
               }`}
             >
               {isOverdue() ? "Overdue: " : "Due: "}
@@ -188,6 +219,7 @@ export default function TaskItem({
               <button
                 onClick={handleEdit}
                 className="p-1 text-[var(--app-foreground-muted)] hover:text-[var(--app-foreground)]"
+                disabled={loading}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -207,6 +239,7 @@ export default function TaskItem({
               <button
                 onClick={handleDelete}
                 className="p-1 text-[var(--app-foreground-muted)] hover:text-red-500"
+                disabled={loading}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -228,9 +261,7 @@ export default function TaskItem({
             </>
           )}
           {!isEditing && (
-            <span className="text-[var(--app-foreground-muted)]">
-              {isExpanded ? "▲" : "▼"}
-            </span>
+            <span className="text-[var(--app-foreground-muted)]">{isExpanded ? "▲" : "▼"}</span>
           )}
         </div>
       </div>
@@ -238,20 +269,12 @@ export default function TaskItem({
       {isExpanded && (
         <div className="px-3 py-2 bg-[var(--app-background)]">
           {isEditing ? (
-            <TaskForm
-              task={task}
-              onSubmit={handleUpdate}
-              onCancel={handleCancel}
-              isEditing={true}
-            />
+            <TaskForm task={task} onSubmit={handleUpdate} onCancel={handleCancel} isEditing={true} />
           ) : (
             <div className="space-y-2">
               {task.description && (
-                <p className="text-sm text-[var(--app-foreground-muted)]">
-                  {task.description}
-                </p>
+                <p className="text-sm text-[var(--app-foreground-muted)]">{task.description}</p>
               )}
-
               {task.tags && task.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {task.tags.map((tag, index) => (
