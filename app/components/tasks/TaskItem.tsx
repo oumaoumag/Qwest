@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { ethers } from "ethers";
+import { useSigner } from "wagmi";
+import TaskManagerABI from "../../abis/TaskManager.json";
 import { Icon } from "../DemoComponents";
-import { Task } from "./TaskList";
-import TaskForm from "./TaskForm";
+import TaskForn from "./TaskForm";
+import { useToast } from "../context/ToastContext";
+import { Task } from "./TaskList"
+
+const TASK_MANAGER_ADDRESS = "CONTRACT_ADDRESS"; // Replace with actual address
 
 type TaskItemProps = {
   task: Task;
@@ -20,6 +26,7 @@ export default function TaskItem({
 }: TaskItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
