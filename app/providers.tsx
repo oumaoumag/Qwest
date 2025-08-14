@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactNode } from "react";
-import { base } from "wagmi/chains";
+import { base } from "viem/chains";
 import { MiniKitProvider } from "@coinbase/onchainkit/minikit";
 import { RewardsProvider } from "./components/context/RewardsContext";
 import { ToastProvider } from "./components/context/ToastContext";
