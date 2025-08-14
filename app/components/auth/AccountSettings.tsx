@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Icon } from "../DemoComponents";
+import { Button } from "../ui/button";
 
 type AccountSettingsProps = {
   initialSettings?: AccountSettings;
