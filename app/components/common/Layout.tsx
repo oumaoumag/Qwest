@@ -16,8 +16,7 @@ import {
   WalletDropdown,
   WalletDropdownDisconnect,
 } from "@coinbase/onchainkit/wallet";
-import { Icon } from "../DemoComponents";
-import { Button } from "../DemoComponents";
+import { Button } from "../ui/button";
 
 type LayoutProps = {
   children: ReactNode;
