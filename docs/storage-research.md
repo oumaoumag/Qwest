@@ -117,7 +117,7 @@ Here’s how to structure your data across onchain and offchain storage:
 
 #### Onchain (Lisk/Base Smart Contracts)
 - **User Profile**:
-  - `walletAddress`: User’s public key (ID).
+  - `walletAddress`: User’s  key (ID).
   - `encryptedName`: Encrypted string (e.g., AES with user’s wallet key).
   - `points`: Integer for gamification.
   - `badges`: Array of badge IDs.
