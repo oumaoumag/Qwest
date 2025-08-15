@@ -1,19 +1,29 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Plus, Target, CheckCircle, Flame, TrendingUp, Calendar } from './ui/icons';
 
-interface GoalsSectionProps {
-  goals: any[];
-  setGoals: (goals: any[]) => void;
+interface Goal {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  progress: number;
+  timeframe: string;
+  dueDate: string;
+  completed: boolean;
 }
 
-export function GoalsSection({ goals, setGoals }: GoalsSectionProps) {
-  const [filter, setFilter] = useState('all');
+interface GoalsSectionProps {
+  goals: Goal[];
+  setGoals: (goals: Goal[]) => void;
+}
+
+export function GoalsSection({ goals }: GoalsSectionProps) {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
