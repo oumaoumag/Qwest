@@ -1,18 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ethers } from 'ethers';
-import { keccak256, toUtf8Bytes } from 'ethers/lib/utils';
-import { useAccount, useSigner } from "wagmi";
-import { uploadToIPFS } from '../utils/ipfs';
-import TaskManagerABI from '../../abis/TaskManager.json';
-import { Button, Icon } from "../DemoComponents";
+import { useState, useEffect, useCallback } from "react";
 import TaskItem from "./TaskItem";
 import TaskForm from "./TaskForm";
-import { useRewards } from "../context/RewardsContext";
-import { showToast, useToast } from "../context/ToastContext";
-import { setBlockGasLimit } from "viem/actions";
-import { randomFill } from 'crypto';
+import { Button } from "../ui/button";
+import { Plus } from "../ui/icons";
 
 const TASK_MANAGER_ADDRESS = 'CONTRACT_ADDRESS';
 
@@ -55,7 +47,7 @@ export default function TaskList() {
   const { showToast } = useToast();     // For notifications
 
   // Fetch tasks from the blockchain
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     if (!address || !signer) return;
     setLoading(true);
     try {
@@ -83,12 +75,12 @@ export default function TaskList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [address, signer, showToast]);
 
   // Load taks when wallet connects or signer  changes
   useEffect(() => {
     fetchTasks();
-  }, [address, signer]);
+  }, [fetchTasks]);
 
   // Add a new task
   const handleAddTask =  async(task: Task) => {
@@ -182,7 +174,7 @@ const handleToggleComplete = async (taskId: string) => {
           variant="primary"
           size="sm"
           onClick={() => setShowForm(!showForm)}
-          icon={<Icon name="plus" size="sm" />}
+          icon={<Plus className="w-4 h-4" />}
         >
           Add Task
         </Button>
