@@ -85,15 +85,15 @@ const QwestApp = () => {
     }
   ]);
 
-  const updateUserData = (updates: any) => {
+  const updateUserData = (updates: Partial<typeof userData>) => {
     setUserData(prev => ({ ...prev, ...updates }));
   };
 
-  const updateGoals = (updatedGoals: any[]) => {
+  const updateGoals = (updatedGoals: typeof goals) => {
     setGoals(updatedGoals);
   };
 
-  const updateTasks = (updatedTasks: any[]) => {
+  const updateTasks = (updatedTasks: typeof tasks) => {
     setTasks(updatedTasks);
   };
 
