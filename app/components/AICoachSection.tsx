@@ -6,12 +6,23 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Bot, Star, Heart, Target, TrendingUp } from './ui/icons';
 
-interface AICoachSectionProps {
-  userData: any;
-  goals: any[];
+interface UserData {
+  level: number;
+  streak: number;
 }
 
-export function AICoachSection({ userData, goals }: AICoachSectionProps) {
+interface Goal {
+  id: string;
+  title: string;
+  progress: number;
+}
+
+interface AICoachSectionProps {
+  userData: UserData;
+  goals: Goal[];
+}
+
+export function AICoachSection({ userData }: AICoachSectionProps) {
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -206,13 +217,13 @@ export function AICoachSection({ userData, goals }: AICoachSectionProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Star className="h-5 w-5 text-yellow-500" />
-            Today's Insight
+            Today&apos;s Insight
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             <p className="text-gray-700">
-              Based on your current {userData.streak}-day streak, you're in the habit-formation sweet spot! 
+              Based on your current {userData.streak}-day streak, you&apos;re in the habit-formation sweet spot!
               This is the perfect time to add a complementary habit to your routine.
             </p>
             <div className="flex gap-2">
