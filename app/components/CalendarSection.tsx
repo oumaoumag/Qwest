@@ -7,7 +7,7 @@ import { Badge } from './ui/badge';
 import { Calendar, Target, CheckCircle, Clock, Plus } from './ui/icons';
 
 interface Goal {
-  id: string;
+  id: number;
   title: string;
   category: string;
   dueDate: string;
@@ -15,7 +15,7 @@ interface Goal {
 }
 
 interface Task {
-  id: string;
+  id: number;
   title: string;
   category: string;
   completed: boolean;
@@ -25,7 +25,7 @@ interface CalendarEvent {
   type: string;
   title: string;
   category: string;
-  id: string;
+  id: number;
   completed: boolean;
 }
 
