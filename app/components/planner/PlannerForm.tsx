@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button, Icon } from "../DemoComponents";
+import { Button } from "../ui/button";
 import { PlannerItem } from "./DailyPlanner";
 
 type PlannerFormProps = {
@@ -245,10 +245,9 @@ export default function PlannerForm({
           Cancel
         </Button>
         <Button
-          variant="primary"
+          variant="default"
           type="submit"
           disabled={!formData.title || !formData.startTime || !formData.endTime}
-          icon={<Icon name={isEditing ? "check" : "plus"} size="sm" />}
         >
           {isEditing ? "Update Activity" : "Add Activity"}
         </Button>
