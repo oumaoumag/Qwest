@@ -22,7 +22,8 @@ export default function TaskItem({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const toast = useToast();
+  // const toast = useToast();
+  const { showToast } = useToast(); 
 
   // Format due date
   const formatDueDate = (date?: Date) => {
@@ -85,16 +86,12 @@ export default function TaskItem({
     setLoading(true);
     try {
       // For now, just update locally without blockchain interaction
-      if (toast?.showToast) {
-        toast.showToast("Task updated successfully!");
-      }
+      showToast("Task updated successfully!");
       onUpdate(updatedTask);
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to update task:", error);
-      if (toast?.showToast) {
-        toast.showToast("Failed to update task");
-      }
+      showToast("Failed to update task");
     } finally {
       setLoading(false);
     }
@@ -106,15 +103,11 @@ export default function TaskItem({
     setLoading(true);
     try {
       // For now, just delete locally without blockchain interaction
-      if (toast?.showToast) {
-        toast.showToast("Task deleted successfully!");
-      }
+      showToast("Task deleted successfully!");
       onDelete(task.id);
     } catch (error) {
       console.error("Failed to delete task:", error);
-      if (toast?.showToast) {
-        toast.showToast("Failed to delete task");
-      }
+      showToast("Failed to delete task");
     } finally {
       setLoading(false);
     }
