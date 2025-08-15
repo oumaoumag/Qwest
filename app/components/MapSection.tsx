@@ -8,7 +8,7 @@ import { Badge } from './ui/badge';
 import { Star, Trophy, CheckCircle, Lock, Play, Target } from './ui/icons';
 
 interface Goal {
-  id: string;
+  id: number;
   title: string;
   category: string;
   progress: number;
@@ -25,8 +25,8 @@ interface UserData {
 }
 
 interface Task {
-  id: string;
-  goalId: string;
+  id: number;
+  goalId: number;
   title: string;
   completed: boolean;
 }
