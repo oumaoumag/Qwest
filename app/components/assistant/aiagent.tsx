@@ -1,4 +1,3 @@
-import { randomFill } from "crypto";
 import { useEffect, useState }  from "react";
 
 const aiSuggestions = [ 
