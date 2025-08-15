@@ -2,13 +2,18 @@
 
 import React from 'react';
 import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Star, Trophy, Flame, Heart, Map, BarChart3, Target, CheckSquare, Bot, Calendar, User } from './ui/icons';
+import { Star, Trophy, Flame, Map, BarChart3, Target, CheckSquare, Bot, Calendar, User } from './ui/icons';
+
+interface UserData {
+  level: number;
+  xp: number;
+  streak: number;
+}
 
 interface NavigationProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
-  userData: any;
+  userData: UserData;
 }
 
 export function Navigation({ activeSection, setActiveSection, userData }: NavigationProps) {
