@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { Check, ChevronRight } from "../ui/icons";
 
 type OnboardingStep = {
   title: string;
@@ -194,9 +195,9 @@ export default function OnboardingFlow({
           onClick={handleNext}
           icon={
             currentStep === steps.length - 1 ? (
-              <Icon name="check" size="sm" />
+              <Check className="w-4 h-4" />
             ) : (
-              <Icon name="arrow-right" size="sm" />
+              <ChevronRight className="w-4 h-4" />
             )
           }
         >
