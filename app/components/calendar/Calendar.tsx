@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Icon } from "../DemoComponents";
+import { Button } from "../ui/button";
 import CalendarEvent from "./CalendarEvent";
 
 type CalendarProps = {
@@ -266,10 +266,9 @@ export default function Calendar({
                 })}
               </h4>
               <Button
-                variant="primary"
+                variant="default"
                 size="sm"
                 onClick={() => setShowEventForm(!showEventForm)}
-                icon={<Icon name="plus" size="sm" />}
               >
                 Add Event
               </Button>
@@ -363,7 +362,7 @@ export default function Calendar({
                       Cancel
                     </Button>
                     <Button
-                      variant="primary"
+                      variant="default"
                       size="sm"
                       onClick={handleSubmitEvent}
                       disabled={!newEvent.title}
