@@ -3,12 +3,10 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Progress } from './ui/progress';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { 
-  TrendingUp, 
-  Target, 
-  CheckCircle, 
+import {
+  Target,
+  CheckCircle,
   Clock,
   Trophy,
   Flame,
@@ -17,10 +15,32 @@ import {
   BarChart3
 } from './ui/icons';
 
+interface UserData {
+  level: number;
+  xp: number;
+  streak: number;
+  totalXp: number;
+  completedGoals: number;
+}
+
+interface Goal {
+  id: string;
+  title: string;
+  progress: number;
+  category: string;
+}
+
+interface Task {
+  id: string;
+  title: string;
+  completed: boolean;
+  xpReward: number;
+}
+
 interface DashboardSectionProps {
-  userData: any;
-  goals: any[];
-  tasks: any[];
+  userData: UserData;
+  goals: Goal[];
+  tasks: Task[];
 }
 
 export function DashboardSection({ userData, goals, tasks }: DashboardSectionProps) {
@@ -102,7 +122,7 @@ export function DashboardSection({ userData, goals, tasks }: DashboardSectionPro
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center space-x-2">
             <Calendar className="w-5 h-5 text-blue-500" />
-            <span>Today's Progress</span>
+            <span>Today&apos;s Progress</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -112,7 +132,7 @@ export function DashboardSection({ userData, goals, tasks }: DashboardSectionPro
                 {completedTasks.length} of {tasks.length} tasks completed
               </div>
               <div className="text-sm text-gray-600">
-                You've earned {totalXpToday} XP today!
+                You&apos;ve earned {totalXpToday} XP today!
               </div>
             </div>
             <div className="text-right">
@@ -152,7 +172,7 @@ export function DashboardSection({ userData, goals, tasks }: DashboardSectionPro
         <CardContent>
           <div className="space-y-4">
             <div className="flex justify-between items-end h-32 px-2">
-              {weeklyStats.map((day, index) => (
+              {weeklyStats.map((day) => (
                 <div key={day.day} className="flex flex-col items-center space-y-2 flex-1">
                   <div className="flex-1 flex items-end">
                     <div
@@ -233,9 +253,9 @@ export function DashboardSection({ userData, goals, tasks }: DashboardSectionPro
             <Trophy className="w-8 h-8 text-white" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-lg font-bold text-gray-900">You're doing amazing!</h3>
+            <h3 className="text-lg font-bold text-gray-900">You&apos;re doing amazing!</h3>
             <p className="text-gray-600">
-              You're {userData.streak} days into your journey. Keep building those healthy habits!
+              You&apos;re {userData.streak} days into your journey. Keep building those healthy habits!
             </p>
           </div>
           <Button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white border-0">
