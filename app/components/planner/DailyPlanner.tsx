@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Icon } from "../DemoComponents";
+import { Button } from "../ui/button";
 import TimeBlock from "./TimeBlock";
 import PlannerForm from "./PlannerForm";
 
@@ -152,13 +152,12 @@ export default function DailyPlanner({
           Daily Planner
         </h3>
         <Button
-          variant="primary"
+          variant="default"
           size="sm"
           onClick={() => {
             setEditingItem(null);
             setShowForm(!showForm);
           }}
-          icon={<Icon name="plus" size="sm" />}
         >
           Add Activity
         </Button>
