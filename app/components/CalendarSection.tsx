@@ -6,9 +6,32 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Calendar, Target, CheckCircle, Clock, Plus } from './ui/icons';
 
+interface Goal {
+  id: string;
+  title: string;
+  category: string;
+  dueDate: string;
+  completed: boolean;
+}
+
+interface Task {
+  id: string;
+  title: string;
+  category: string;
+  completed: boolean;
+}
+
+interface CalendarEvent {
+  type: string;
+  title: string;
+  category: string;
+  id: string;
+  completed: boolean;
+}
+
 interface CalendarSectionProps {
-  goals: any[];
-  tasks: any[];
+  goals: Goal[];
+  tasks: Task[];
 }
 
 export function CalendarSection({ goals, tasks }: CalendarSectionProps) {
@@ -18,7 +41,7 @@ export function CalendarSection({ goals, tasks }: CalendarSectionProps) {
   // Generate calendar events from goals and tasks
   const getEventsForDate = (date: Date) => {
     const dateStr = date.toISOString().split('T')[0];
-    const events: any[] = [];
+    const events: CalendarEvent[] = [];
 
     // Add goal deadlines
     goals.forEach(goal => {
@@ -82,7 +105,6 @@ export function CalendarSection({ goals, tasks }: CalendarSectionProps) {
     const year = selectedDate.getFullYear();
     const month = selectedDate.getMonth();
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
     
