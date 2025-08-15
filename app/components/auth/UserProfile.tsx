@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { Plus, Check } from "../ui/icons";
 
 type UserProfileProps = {
   initialUserData?: UserData;
@@ -74,7 +75,7 @@ export default function UserProfile({
             variant="ghost"
             size="sm"
             onClick={() => setIsEditing(true)}
-            icon={<Icon name="plus" size="sm" />}
+            icon={<Plus className="w-4 h-4" />}
           >
             Edit
           </Button>
@@ -197,40 +198,31 @@ export default function UserProfile({
           ) : (
             <ul className="space-y-1">
               <li className="flex items-start">
-                <Icon
-                  name={userData.preferences.dailyGoals ? "check" : "plus"}
-                  className={`mt-1 mr-2 ${
-                    userData.preferences.dailyGoals
-                      ? "text-[var(--app-accent)]"
-                      : "text-[var(--app-foreground-muted)]"
-                  }`}
-                />
+                {userData.preferences.dailyGoals ? (
+                  <Check className="mt-1 mr-2 w-4 h-4 text-green-600" />
+                ) : (
+                  <Plus className="mt-1 mr-2 w-4 h-4 text-gray-400" />
+                )}
                 <span className="text-[var(--app-foreground-muted)]">
                   Daily goals and progress tracking
                 </span>
               </li>
               <li className="flex items-start">
-                <Icon
-                  name={userData.preferences.calendarSync ? "check" : "plus"}
-                  className={`mt-1 mr-2 ${
-                    userData.preferences.calendarSync
-                      ? "text-[var(--app-accent)]"
-                      : "text-[var(--app-foreground-muted)]"
-                  }`}
-                />
+                {userData.preferences.calendarSync ? (
+                  <Check className="mt-1 mr-2 w-4 h-4 text-green-600" />
+                ) : (
+                  <Plus className="mt-1 mr-2 w-4 h-4 text-gray-400" />
+                )}
                 <span className="text-[var(--app-foreground-muted)]">
                   Calendar synchronization
                 </span>
               </li>
               <li className="flex items-start">
-                <Icon
-                  name={userData.preferences.aiAssistant ? "check" : "plus"}
-                  className={`mt-1 mr-2 ${
-                    userData.preferences.aiAssistant
-                      ? "text-[var(--app-accent)]"
-                      : "text-[var(--app-foreground-muted)]"
-                  }`}
-                />
+                {userData.preferences.aiAssistant ? (
+                  <Check className="mt-1 mr-2 w-4 h-4 text-green-600" />
+                ) : (
+                  <Plus className="mt-1 mr-2 w-4 h-4 text-gray-400" />
+                )}
                 <span className="text-[var(--app-foreground-muted)]">
                   AI assistant suggestions
                 </span>
@@ -246,7 +238,7 @@ export default function UserProfile({
               variant="primary"
               onClick={handleSave}
               disabled={isSaving}
-              icon={isSaving ? undefined : <Icon name="check" size="sm" />}
+              icon={isSaving ? undefined : <Check className="w-4 h-4" />}
             >
               {isSaving ? "Saving..." : "Save Changes"}
             </Button>
