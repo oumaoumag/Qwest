@@ -12,12 +12,18 @@ export async function getUserNotificationDetails(
   fid: number,
 ): Promise<FrameNotificationDetails | null> {
   if (!redis) {
+    console.warn("Redis not configured, returning null for notification details");
     return null;
   }
 
-  return await redis.get<FrameNotificationDetails>(
-    getUserNotificationDetailsKey(fid),
-  );
+  try {
+    return await redis.get<FrameNotificationDetails>(
+      getUserNotificationDetailsKey(fid),
+    );
+  } catch (error) {
+    console.error("Error getting notification details:", error);
+    return null;
+  }
 }
 
 export async function setUserNotificationDetails(
@@ -25,18 +31,28 @@ export async function setUserNotificationDetails(
   notificationDetails: FrameNotificationDetails,
 ): Promise<void> {
   if (!redis) {
+    console.warn("Redis not configured, cannot set notification details");
     return;
   }
 
-  await redis.set(getUserNotificationDetailsKey(fid), notificationDetails);
+  try {
+    await redis.set(getUserNotificationDetailsKey(fid), notificationDetails);
+  } catch (error) {
+    console.error("Error setting notification details:", error);
+  }
 }
 
 export async function deleteUserNotificationDetails(
   fid: number,
 ): Promise<void> {
   if (!redis) {
+    console.warn("Redis not configured, cannot delete notification details");
     return;
   }
 
-  await redis.del(getUserNotificationDetailsKey(fid));
+  try {
+    await redis.del(getUserNotificationDetailsKey(fid));
+  } catch (error) {
+    console.error("Error deleting notification details:", error);
+  }
 }
