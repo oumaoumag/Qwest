@@ -1,4 +1,8 @@
-import type { FrameNotificationDetails } from "@farcaster/frame-sdk";
+// Local type definition since @farcaster/frame-sdk is deprecated
+type FrameNotificationDetails = {
+  url: string;
+  token: string;
+};
 import { redis } from "./redis";
 
 const notificationServiceKey =

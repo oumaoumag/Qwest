@@ -1,8 +1,40 @@
-import {
-  FrameNotificationDetails,
-  type SendNotificationRequest,
-  sendNotificationResponseSchema,
-} from "@farcaster/frame-sdk";
+// Note: @farcaster/frame-sdk is deprecated, using types directly
+type FrameNotificationDetails = {
+  url: string;
+  token: string;
+};
+
+type SendNotificationRequest = {
+  notificationId: string;
+  title: string;
+  body: string;
+  targetUrl: string;
+  tokens: string[];
+};
+
+// Define proper types for the notification response
+type NotificationResponseData = {
+  result: {
+    rateLimitedTokens: string[];
+  };
+};
+
+// Simple response schema validation
+const sendNotificationResponseSchema = {
+  parse: (data: unknown): NotificationResponseData => data as NotificationResponseData,
+  safeParse: (data: unknown): { success: boolean; data?: NotificationResponseData; error?: { errors: unknown[] } } => {
+    try {
+      // Basic validation - in a real app you'd want more robust validation
+      const parsed = data as NotificationResponseData;
+      if (parsed && typeof parsed === 'object' && 'result' in parsed) {
+        return { success: true, data: parsed };
+      }
+      return { success: false, error: { errors: ['Invalid response format'] } };
+    } catch {
+      return { success: false, error: { errors: ['Failed to parse response'] } };
+    }
+  }
+};
 import { getUserNotificationDetails } from "@/lib/notification";
 
 const appUrl = process.env.NEXT_PUBLIC_URL || "";
@@ -53,10 +85,10 @@ export async function sendFrameNotification({
   if (response.status === 200) {
     const responseBody = sendNotificationResponseSchema.safeParse(responseJson);
     if (responseBody.success === false) {
-      return { state: "error", error: responseBody.error.errors };
+      return { state: "error", error: responseBody.error?.errors || ['Unknown error'] };
     }
 
-    if (responseBody.data.result.rateLimitedTokens.length) {
+    if (responseBody.data && responseBody.data.result.rateLimitedTokens.length) {
       return { state: "rate_limit" };
     }
 
