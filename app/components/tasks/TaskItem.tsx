@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ethers } from "ethers";
 import { useSigner } from "wagmi";
 import { uploadToIPFS } from "../utils/ipfs";
