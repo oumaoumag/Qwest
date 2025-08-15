@@ -17,6 +17,7 @@ import {
   WalletDropdownDisconnect,
 } from "@coinbase/onchainkit/wallet";
 import { Button } from "../ui/button";
+import { Plus, Check } from "../ui/icons";
 
 type LayoutProps = {
   children: ReactNode;
@@ -57,7 +58,7 @@ export default function Layout({
           size="sm"
           onClick={handleAddFrame}
           className="text-[var(--app-accent)] p-4"
-          icon={<Icon name="plus" size="sm" />}
+          icon={<Plus className="w-4 h-4" />}
         >
           Save Frame
         </Button>
@@ -67,7 +68,7 @@ export default function Layout({
     if (frameAdded) {
       return (
         <div className="flex items-center space-x-1 text-sm font-medium text-[#0052FF] animate-fade-out">
-          <Icon name="check" size="sm" className="text-[#0052FF]" />
+          <Check className="w-4 h-4 text-[#0052FF]" />
           <span>Saved</span>
         </div>
       );
