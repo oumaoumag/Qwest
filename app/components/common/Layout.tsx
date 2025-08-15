@@ -1,23 +1,8 @@
 "use client";
 
-import { ReactNode } from "react";
-import { useMiniKit, useAddFrame } from "@coinbase/onchainkit/minikit";
-import { useEffect, useMemo, useState, useCallback } from "react";
-import { 
-  Name, 
-  Identity, 
-  Address, 
-  Avatar, 
-  EthBalance 
-} from "@coinbase/onchainkit/identity";
-import {
-  ConnectWallet,
-  Wallet,
-  WalletDropdown,
-  WalletDropdownDisconnect,
-} from "@coinbase/onchainkit/wallet";
+import { ReactNode, useEffect, useState } from "react";
+import { useMiniKit } from "@coinbase/onchainkit/minikit";
 import { Button } from "../ui/button";
-import { Plus, Check } from "../ui/icons";
 
 type LayoutProps = {
   children: ReactNode;
@@ -28,101 +13,55 @@ type LayoutProps = {
 
 export default function Layout({
   children,
-  title = "Productivity Hub",
+  title = "Qwest",
   showWallet = true,
-  showSaveFrame = true,
+  showSaveFrame = true
 }: LayoutProps) {
-  const { setFrameReady, isFrameReady, context } = useMiniKit();
-  const [frameAdded, setFrameAdded] = useState(false);
-  
-  const addFrame = useAddFrame();
+  const miniKit = useMiniKit();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (!isFrameReady) {
-      setFrameReady();
-    }
-  }, [setFrameReady, isFrameReady]);
+    setIsMounted(true);
+  }, []);
 
-  const handleAddFrame = useCallback(async () => {
-    const frameAdded = await addFrame();
-    setFrameAdded(Boolean(frameAdded));
-  }, [addFrame]);
+  if (!isMounted) {
+    return null; // Prevent hydration mismatch
+  }
 
-  const saveFrameButton = useMemo(() => {
-    if (!showSaveFrame) return null;
-    
-    if (context && !context.client.added) {
-      return (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleAddFrame}
-          className="text-[var(--app-accent)] p-4"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Save Frame
-        </Button>
-      );
-    }
-
-    if (frameAdded) {
-      return (
-        <div className="flex items-center space-x-1 text-sm font-medium text-[#0052FF] animate-fade-out">
-          <Check className="w-4 h-4 text-[#0052FF]" />
-          <span>Saved</span>
-        </div>
-      );
-    }
-
-    return null;
-  }, [context, frameAdded, handleAddFrame, showSaveFrame]);
+  // Use the showWallet and showSaveFrame props to conditionally render elements
+  const shouldShowWalletInfo = showWallet && miniKit;
+  const shouldShowSaveFrame = showSaveFrame;
 
   return (
-    <div className="flex flex-col min-h-screen font-sans text-[var(--app-foreground)] mini-app-theme from-[var(--app-background)] to-[var(--app-gray)]">
-      <div className="w-full max-w-7xl mx-auto px-4 py-3">
-        <header className="flex justify-between items-center mb-3 h-11">
-          <div className="flex items-center">
-            {title && (
-              <h1 className="text-lg font-semibold text-[var(--app-foreground)]">
-                {title}
-              </h1>
+    <div className="min-h-screen bg-[var(--app-background)] text-[var(--app-foreground)]">
+      <div className="max-w-md mx-auto">
+        <header className="sticky top-0 z-40 bg-[var(--app-background)]/80 backdrop-blur-sm border-b border-[var(--app-card-border)] px-4 py-3">
+          <div className="flex items-center justify-between">
+            <h1 className="text-lg font-semibold">{title}</h1>
+            {shouldShowWalletInfo && (
+              <div className="text-xs text-[var(--app-foreground-muted)]">
+                MiniKit Ready
+              </div>
             )}
-          </div>
-          <div className="flex items-center space-x-2">
-            {showWallet && (
-              <Wallet className="z-10">
-                <ConnectWallet>
-                  <Name className="text-inherit" />
-                </ConnectWallet>
-                <WalletDropdown>
-                  <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
-                    <Avatar />
-                    <Name />
-                    <Address />
-                    <EthBalance />
-                  </Identity>
-                  <WalletDropdownDisconnect />
-                </WalletDropdown>
-              </Wallet>
-            )}
-            {saveFrameButton}
           </div>
         </header>
 
-        <main className="flex-1">
+        <main className="flex-1 p-4">
           {children}
         </main>
 
-        <footer className="mt-2 pt-4 flex justify-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-[var(--ock-text-foreground-muted)] text-xs"
-            onClick={() => window.open("https://base.org/builders/minikit", "_blank")}
-          >
-            Built on Base with MiniKit
-          </Button>
-        </footer>
+        {shouldShowSaveFrame && (
+          <footer className="mt-8 pt-4 pb-6 flex justify-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-[var(--ock-text-foreground-muted)] text-xs"
+              onClick={() => window.open("https://base.org/builders/minikit", "_blank")}
+            >
+              Built on Base with MiniKit
+            </Button>
+          </footer>
+        )}
       </div>
     </div>
   );
