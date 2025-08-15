@@ -295,12 +295,18 @@ export default function AccountSettings({
 
         <div className="flex justify-end">
           <Button
-            variant="primary"
+            variant="default"
             onClick={handleSave}
             disabled={isSaving}
-            icon={isSaving ? undefined : <Check className="w-4 h-4" />}
           >
-            {isSaving ? "Saving..." : "Save Changes"}
+            {isSaving ? (
+              "Saving..."
+            ) : (
+              <>
+                <Check className="w-4 h-4 mr-2" />
+                Save Changes
+              </>
+            )}
           </Button>
         </div>
       </div>
