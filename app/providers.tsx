@@ -22,7 +22,7 @@ export function Providers(props: { children: ReactNode }) {
     >
       <RewardsProvider>
         <ToastProvider>
-        {props.children}
+          {props.children}
         </ToastProvider>
       </RewardsProvider>
     </MiniKitProvider>
