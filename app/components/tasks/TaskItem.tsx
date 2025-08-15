@@ -1,16 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ethers } from "ethers";
-import { useSigner } from "wagmi";
-import { uploadToIPFS } from "../utils/ipfs";
-import TaskManagerABI from "../../abis/TaskManager.json";
-import { Icon } from "../DemoComponents";
 import TaskForm from "./TaskForm";
 import { useToast } from "../context/ToastContext";
-import { Task } from "./TaskList"
-
-const TASK_MANAGER_ADDRESS = "YOUR_CONTRACT_ADDRESS"; // Replace with actual address
+import { Task } from "./TaskList";
+import { CheckCircle } from "../ui/icons";
 
 type TaskItemProps = {
   task: Task;
@@ -28,8 +22,7 @@ export default function TaskItem({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { data: signer } = useSigner();
-  const { showToast } = useToast();
+  const toast = useToast();
 
   // Format due date
   const formatDueDate = (date?: Date) => {
@@ -87,55 +80,41 @@ export default function TaskItem({
     return taskDate < today && !task.completed;
   };
 
-  // Handle task update onchain
+  // Handle task update
   const handleUpdate = async (updatedTask: Task) => {
-    if (!signer) {
-      showToast("Please connect your wallet");
-      return;
-    }
     setLoading(true);
     try {
-      const taskData = {
-        title: updatedTask.title,
-        description: updatedTask.description || "",
-        dueDate: updatedTask.dueDate ? Math.floor(updatedTask.dueDate.getTime() / 1000) : undefined,
-        priority: updatedTask.priority,
-        category: updatedTask.category,
-        tags: updatedTask.tags,
-      };
-      const cid = await uploadToIPFS(taskData);
-      const dataHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(JSON.stringify(taskData)));
-      const contract = new ethers.Contract(TASK_MANAGER_ADDRESS, TaskManagerABI, signer);
-      const tx = await contract.updateTask(task.id, dataHash, cid); // Assumes updateTask exists
-      await tx.wait();
-      showToast("Task updated successfully!");
-      onUpdate({ ...updatedTask, cid }); // Update local state
+      // For now, just update locally without blockchain interaction
+      if (toast?.showToast) {
+        toast.showToast("Task updated successfully!");
+      }
+      onUpdate(updatedTask);
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to update task:", error);
-      showToast("Failed to update task");
+      if (toast?.showToast) {
+        toast.showToast("Failed to update task");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle task deletion onchain
+  // Handle task deletion
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!signer) {
-      showToast("Please connect your wallet");
-      return;
-    }
     setLoading(true);
     try {
-      const contract = new ethers.Contract(TASK_MANAGER_ADDRESS, TaskManagerABI, signer);
-      const tx = await contract.deleteTask(task.id); // Assumes deleteTask exists
-      await tx.wait();
-      showToast("Task deleted successfully!");
+      // For now, just delete locally without blockchain interaction
+      if (toast?.showToast) {
+        toast.showToast("Task deleted successfully!");
+      }
       onDelete(task.id);
     } catch (error) {
       console.error("Failed to delete task:", error);
-      showToast("Failed to delete task");
+      if (toast?.showToast) {
+        toast.showToast("Failed to delete task");
+      }
     } finally {
       setLoading(false);
     }
@@ -178,7 +157,7 @@ export default function TaskItem({
           disabled={loading}
         >
           {task.completed && (
-            <Icon name="check" size="sm" className="text-[var(--app-background)]" />
+            <CheckCircle className="w-4 h-4 text-[var(--app-background)]" />
           )}
         </button>
 
