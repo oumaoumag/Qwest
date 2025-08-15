@@ -10,16 +10,14 @@ import { CheckCircle, Clock, Star, Plus, CheckSquare } from './ui/icons';
 interface Task {
   id: number;
   title: string;
-  description: string;
+  goalId: number;
   category: string;
   completed: boolean;
   xpReward: number;
-  priority: string;
-  dueDate: string;
 }
 
 interface Goal {
-  id: string;
+  id: number;
   title: string;
   category: string;
 }
