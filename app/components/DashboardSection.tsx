@@ -19,19 +19,21 @@ interface UserData {
   level: number;
   xp: number;
   streak: number;
-  totalXp: number;
+  totalGoals: number;
   completedGoals: number;
+  achievements: number;
+  tokens: number;
 }
 
 interface Goal {
-  id: string;
+  id: number;
   title: string;
   progress: number;
   category: string;
 }
 
 interface Task {
-  id: string;
+  id: number;
   title: string;
   completed: boolean;
   xpReward: number;
