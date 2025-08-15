@@ -191,17 +191,20 @@ export default function OnboardingFlow({
           Back
         </Button>
         <Button
-          variant="primary"
+          variant="default"
           onClick={handleNext}
-          icon={
-            currentStep === steps.length - 1 ? (
-              <Check className="w-4 h-4" />
-            ) : (
-              <ChevronRight className="w-4 h-4" />
-            )
-          }
         >
-          {currentStep === steps.length - 1 ? "Get Started" : "Next"}
+          {currentStep === steps.length - 1 ? (
+            <>
+              <Check className="w-4 h-4 mr-2" />
+              Get Started
+            </>
+          ) : (
+            <>
+              Next
+              <ChevronRight className="w-4 h-4 ml-2" />
+            </>
+          )}
         </Button>
       </div>
     </div>
