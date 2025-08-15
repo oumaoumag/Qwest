@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../DemoComponents";
+import { Button } from "../ui/button";
 import { CalendarEventType } from "./Calendar";
 
 type CalendarEventProps = {
@@ -232,7 +232,7 @@ export default function CalendarEvent({
                   Cancel
                 </Button>
                 <Button
-                  variant="primary"
+                  variant="default"
                   size="sm"
                   onClick={handleSave}
                 >
