@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button, Icon } from "../DemoComponents";
+import { Button } from "../ui/button";
 import { Task } from "./TaskList";
 
 type TaskFormProps = {
@@ -95,7 +95,9 @@ export default function TaskForm({
       completed: formData.completed || false,
       dueDate: formData.dueDate,
       priority: formData.priority as "low" | "medium" | "high" || "medium",
+      category: formData.category as "work" | "personal" | "health" | "learning" | "social" | "other" || "other",
       tags: formData.tags || [],
+      cid: task?.cid || "",
     };
     
     onSubmit(newTask);
@@ -281,10 +283,9 @@ export default function TaskForm({
           Cancel
         </Button>
         <Button
-          variant="primary"
+          variant="default"
           type="submit"
           disabled={!formData.title}
-          icon={<Icon name={isEditing ? "check" : "plus"} size="sm" />}
         >
           {isEditing ? "Update Task" : "Add Task"}
         </Button>
