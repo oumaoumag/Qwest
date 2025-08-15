@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { Check } from "../ui/icons";
 
 type AccountSettingsProps = {
   initialSettings?: AccountSettings;
@@ -297,7 +298,7 @@ export default function AccountSettings({
             variant="primary"
             onClick={handleSave}
             disabled={isSaving}
-            icon={isSaving ? undefined : <Icon name="check" size="sm" />}
+            icon={isSaving ? undefined : <Check className="w-4 h-4" />}
           >
             {isSaving ? "Saving..." : "Save Changes"}
           </Button>
