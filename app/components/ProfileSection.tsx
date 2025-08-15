@@ -5,21 +5,37 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { 
-  User, 
-  Trophy, 
-  Star, 
-  Flame, 
-  Target, 
+import {
+  Trophy,
+  Star,
+  Flame,
+  Target,
   Calendar,
   TrendingUp,
   Award,
   Settings
 } from './ui/icons';
 
+interface UserData {
+  level: number;
+  xp: number;
+  streak: number;
+  totalXp: number;
+  completedGoals: number;
+  name: string;
+  joinDate: string;
+}
+
+interface Goal {
+  id: string;
+  title: string;
+  category: string;
+  completed: boolean;
+}
+
 interface ProfileSectionProps {
-  userData: any;
-  goals: any[];
+  userData: UserData;
+  goals: Goal[];
 }
 
 export function ProfileSection({ userData, goals }: ProfileSectionProps) {
@@ -57,7 +73,6 @@ export function ProfileSection({ userData, goals }: ProfileSectionProps) {
     };
   });
 
-  const nextLevelXP = userData.level * 1000; // Simple calculation
   const currentLevelProgress = ((userData.xp % 1000) / 1000) * 100;
 
   return (
@@ -191,7 +206,7 @@ export function ProfileSection({ userData, goals }: ProfileSectionProps) {
                 <Target className="w-4 h-4 text-white" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium">Completed "Learn Spanish" goal</p>
+                <p className="text-sm font-medium">Completed &quot;Learn Spanish&quot; goal</p>
                 <p className="text-xs text-gray-600">2 hours ago</p>
               </div>
               <Badge variant="secondary" className="bg-green-100 text-green-800">
