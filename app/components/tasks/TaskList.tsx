@@ -6,7 +6,7 @@ import TaskForm from "./TaskForm";
 import { Button } from "../ui/button";
 import { Plus } from "../ui/icons";
 
-const TASK_MANAGER_ADDRESS = 'CONTRACT_ADDRESS';
+
 
 export type Task = {
   id: string;
@@ -20,13 +20,7 @@ export type Task = {
   cid: string; // For IPFS integration
 };
 
-const encouragementMessages = [
-  "Great job! Keep up the momentum.",
-  "You're on a roll! What's next?",
-  "Nice work! Your're making progress.",
-  "Awesome! You're crushing your goals.",
-  "Well dobe! Every step counts.",
-];
+
 
 // type TaskListProps = {
 //   initialTasks?: Task[];
@@ -42,40 +36,18 @@ export default function TaskList() {
   const [sortBy, setSortBy] = useState<"dueDate" | "priority" | "title">("dueDate");
   const [loading, setLoading] = useState(false);
 
-  const { address } = useAccount(); // Get user's wallet address
-  const { data: signer } = useSigner(); // GEt signer for transactions
-  const { showToast } = useToast();     // For notifications
-
-  // Fetch tasks from the blockchain
+  // Simplified without blockchain functionality for now
   const fetchTasks = useCallback(async () => {
-    if (!address || !signer) return;
     setLoading(true);
     try {
-      const contract = new ethers.Contract(TASK_MANAGER_ADDRESS, TaskManagerABI, signer);
-      const taskIds = await contract.getUserTasks(address); 
-      const fetchedTasks = await Promise.all(
-        taskIds.map(async (id: string) => {
-          const task = await contract.task(id);          // Fetch task metadata
-          const response = await fetch(`https://ipfs.io/ipfs/${taskIds.cid}`);
-          const taskData = await response.json();
-          return {
-            id: id.toString(),
-            ...taskData,
-            completed: task.completed,
-            dueData: task.dueData ? new Date(task.dueDate * 1000) : undefined,
-            priority: task.priority || "medium", // Default if not stored
-            category: task.category || "other", // Default if not stored
-        }; 
-      })
-    );
-    setTasks(fetchedTasks);
+      // For now, just use local state without blockchain interaction
+      // Tasks will be managed locally
     } catch (error) {
       console.error("Failed to fetch tasks:", error);
-      showToast("Failed to load tasks");
     } finally {
       setLoading(false);
     }
-  }, [address, signer, showToast]);
+  }, []);
 
   // Load taks when wallet connects or signer  changes
   useEffect(() => {
@@ -83,58 +55,28 @@ export default function TaskList() {
   }, [fetchTasks]);
 
   // Add a new task
-  const handleAddTask =  async(task: Task) => {
-   if (!signer) {
-   showToast("Please connect your waller");
-   return;
-  };
-  setLoading(true)
-  try {
-    const taskData = {
-      title: task.title,
-      description: task.description || "",
-      dueData: task.dueDate ? Math.floor(task.dueDate.getTime() / 1000) : undefined,
-      priority: task.priority,
-      category: task.category,
-      tags: task.tags,
-    };
-    const dataHash = keccak256(toUtf8Bytes(JSON.stringify(taskData)));
-    const dataHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(JSON.stringify(taskData)));
-    const contract = new ethers.Contract(TASK_MANAGER_ADDRESS, TaskManagerABI, signer);
-    const tx = await contract.createTask(dataHash, cid); // Call Smart Contract
-    await tx.await();
-    showToast("Task created successfully!");
-    fetchTasks();  // Refresh task list
-    setShowForm(false);
-  } catch (error) {
-    console.error("Failed to create task:", error);
-    showToast("Failed to create task");
-  } finally {
+  const handleAddTask = async (task: Task) => {
+    setLoading(true);
+    try {
+      // For now, just add to local state without blockchain interaction
+      setTasks(prev => [...prev, task]);
+      setShowForm(false);
+    } catch (error) {
+      console.error("Failed to create task:", error);
+    } finally {
     setLoading(false);
   }
 };
 
 // Toggle task completion
 const handleToggleComplete = async (taskId: string) => {
-  if (!signer) {
-    showToast("Please connect your wallet");
-    return;
-  }
   setLoading(true);
   try {
-    const taskToUpdate = tasks.find((task) => task.id === taskId);
-    if (!taskToUpdate) return;
-    
-    const contract = new ethers.Contract(TASK_MANAGER_ADDRESS, TaskManagerABI, signer);
-    const tx = await contract.completeTask(taskId); // Call smart contract
-    await tx.wait();
-
-    const randomMessage = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
-    showToast(`${randomMessage} You earned 10 points.`);
-    fetchTasks(); // Refresh task list
+    setTasks(prev => prev.map(task =>
+      task.id === taskId ? { ...task, completed: !task.completed } : task
+    ));
   } catch (error) {
     console.error("Failed to complete task:", error);
-    showToast("Failed to complete task");
   } finally {
     setLoading(false);
   }
@@ -171,11 +113,11 @@ const handleToggleComplete = async (taskId: string) => {
           Tasks
         </h3>
         <Button
-          variant="primary"
+          variant="default"
           size="sm"
           onClick={() => setShowForm(!showForm)}
-          icon={<Plus className="w-4 h-4" />}
         >
+          <Plus className="w-4 h-4 mr-2" />
           Add Task
         </Button>
       </div>
