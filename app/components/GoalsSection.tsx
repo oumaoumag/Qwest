@@ -8,14 +8,15 @@ import { Progress } from './ui/progress';
 import { Plus, Target, CheckCircle, Flame, TrendingUp, Calendar } from './ui/icons';
 
 interface Goal {
-  id: string;
+  id: number;
   title: string;
-  description: string;
   category: string;
   progress: number;
-  timeframe: string;
   dueDate: string;
   completed: boolean;
+  type: string;
+  target: number;
+  streak: number;
 }
 
 interface GoalsSectionProps {
