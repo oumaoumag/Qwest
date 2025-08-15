@@ -58,8 +58,8 @@ export default function Layout({
           size="sm"
           onClick={handleAddFrame}
           className="text-[var(--app-accent)] p-4"
-          icon={<Plus className="w-4 h-4" />}
         >
+          <Plus className="w-4 h-4 mr-2" />
           Save Frame
         </Button>
       );
