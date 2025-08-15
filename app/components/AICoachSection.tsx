@@ -12,7 +12,7 @@ interface UserData {
 }
 
 interface Goal {
-  id: string;
+  id: number;
   title: string;
   progress: number;
 }
