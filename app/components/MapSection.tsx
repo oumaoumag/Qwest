@@ -1,16 +1,40 @@
 "use client";
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
 import { Badge } from './ui/badge';
 import { Star, Trophy, CheckCircle, Lock, Play, Target } from './ui/icons';
 
+interface Goal {
+  id: string;
+  title: string;
+  category: string;
+  progress: number;
+  completed: boolean;
+  type: string;
+  target: number;
+  streak: number;
+}
+
+interface UserData {
+  level: number;
+  xp: number;
+  streak: number;
+}
+
+interface Task {
+  id: string;
+  goalId: string;
+  title: string;
+  completed: boolean;
+}
+
 interface MapSectionProps {
-  goals: any[];
-  userData: any;
-  tasks: any[];
+  goals: Goal[];
+  userData: UserData;
+  tasks: Task[];
 }
 
 export function MapSection({ goals, userData, tasks }: MapSectionProps) {
@@ -232,7 +256,7 @@ export function MapSection({ goals, userData, tasks }: MapSectionProps) {
             <Trophy className="w-12 h-12 text-yellow-500 mx-auto mb-3" />
             <h3 className="text-lg font-bold text-gray-900 mb-2">Amazing Progress!</h3>
             <p className="text-gray-600 mb-4">
-              You've completed {goals.filter(g => g.completed).length} goals. Keep up the fantastic work!
+              You&apos;ve completed {goals.filter(g => g.completed).length} goals. Keep up the fantastic work!
             </p>
             <Button variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-200">
               View All Achievements
