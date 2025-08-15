@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../DemoComponents";
+import { Button } from "../ui/button";
 
 type FeedbackFormProps = {
   onSubmit?: (feedback: Feedback) => void;
@@ -128,7 +128,7 @@ export default function FeedbackForm({
             </p>
             {onClose && (
               <div className="mt-6">
-                <Button variant="primary" onClick={onClose}>
+                <Button variant="default" onClick={onClose}>
                   Close
                 </Button>
               </div>
@@ -245,7 +245,7 @@ export default function FeedbackForm({
                 </Button>
               )}
               <Button
-                variant="primary"
+                variant="default"
                 type="submit"
                 disabled={isSubmitting || !feedback.rating || !feedback.category || !feedback.comment}
               >
