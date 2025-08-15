@@ -5,14 +5,35 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
-import { CheckCircle, Clock, Star, Target, Plus, CheckSquare } from './ui/icons';
+import { CheckCircle, Clock, Star, Plus, CheckSquare } from './ui/icons';
+
+interface Task {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  completed: boolean;
+  xpReward: number;
+  priority: string;
+  dueDate: string;
+}
+
+interface Goal {
+  id: string;
+  title: string;
+  category: string;
+}
+
+interface UserData {
+  xp: number;
+}
 
 interface TasksSectionProps {
-  tasks: any[];
-  setTasks: (tasks: any[]) => void;
-  goals: any[];
-  userData: any;
-  updateUserData: (updates: any) => void;
+  tasks: Task[];
+  setTasks: (tasks: Task[]) => void;
+  goals: Goal[];
+  userData: UserData;
+  updateUserData: (updates: Partial<UserData>) => void;
 }
 
 export function TasksSection({ tasks, setTasks, goals, userData, updateUserData }: TasksSectionProps) {
@@ -131,7 +152,7 @@ export function TasksSection({ tasks, setTasks, goals, userData, updateUserData 
         <CardContent className="p-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Today's Progress</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Today&apos;s Progress</h3>
               <div className="text-2xl font-bold text-blue-600">
                 {Math.round((completedTasks.length / tasks.length) * 100)}%
               </div>
@@ -233,8 +254,8 @@ export function TasksSection({ tasks, setTasks, goals, userData, updateUserData 
               <CheckSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No tasks found</h3>
               <p className="text-gray-500 mb-4">
-                {filter === 'pending' 
-                  ? "Great job! You've completed all your tasks." 
+                {filter === 'pending'
+                  ? "Great job! You&apos;ve completed all your tasks."
                   : filter === 'completed'
                   ? "No completed tasks yet. Start working on your goals!"
                   : "Add some tasks to get started on your journey."
