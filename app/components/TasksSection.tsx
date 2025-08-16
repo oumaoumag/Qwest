@@ -7,32 +7,14 @@ import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { CheckCircle, Clock, Star, Plus, CheckSquare } from './ui/icons';
 
-interface Task {
-  id: number;
-  title: string;
-  goalId: number;
-  category: string;
-  completed: boolean;
-  xpReward: number;
-}
-
-interface Goal {
-  id: number;
-  title: string;
-  category: string;
-}
-
-interface UserData {
-  xp: number;
-}
-
-interface TasksSectionProps {
-  tasks: Task[];
-  setTasks: (tasks: Task[]) => void;
-  goals: Goal[];
-  userData: UserData;
-  updateUserData: (updates: Partial<UserData>) => void;
-}
+// Import domain utilities
+import { TasksSectionProps } from '../domain/types';
+import {
+  getCategoryBadge,
+  getCategoryIcon,
+  calculateXpReward
+} from '../domain/constants';
+import { formatNumber } from '../domain/format';
 
 export function TasksSection({ tasks, setTasks, goals, userData, updateUserData }: TasksSectionProps) {
   const [filter, setFilter] = useState('all'); // 'all', 'pending', 'completed'
@@ -41,7 +23,8 @@ export function TasksSection({ tasks, setTasks, goals, userData, updateUserData 
     const updatedTasks = tasks.map(task => {
       if (task.id === taskId && !task.completed) {
         // Award XP
-        updateUserData({ xp: userData.xp + task.xpReward });
+        const xpReward = task.xpReward || calculateXpReward(task.category);
+        updateUserData({ xp: userData.xp + xpReward });
         return { ...task, completed: true };
       }
       return task;
@@ -53,7 +36,8 @@ export function TasksSection({ tasks, setTasks, goals, userData, updateUserData 
     const updatedTasks = tasks.map(task => {
       if (task.id === taskId && task.completed) {
         // Remove XP
-        updateUserData({ xp: Math.max(0, userData.xp - task.xpReward) });
+        const xpReward = task.xpReward || calculateXpReward(task.category);
+        updateUserData({ xp: Math.max(0, userData.xp - xpReward) });
         return { ...task, completed: false };
       }
       return task;
@@ -69,21 +53,10 @@ export function TasksSection({ tasks, setTasks, goals, userData, updateUserData 
 
   const completedTasks = tasks.filter(task => task.completed);
   const pendingTasks = tasks.filter(task => !task.completed);
-  const totalXpEarned = completedTasks.reduce((sum, task) => sum + task.xpReward, 0);
+  const totalXpEarned = completedTasks.reduce((sum, task) => sum + (task.xpReward || 0), 0);
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'health': return 'bg-green-100 text-green-800 border-green-200';
-      case 'finance': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'education': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'career': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'relationships': return 'bg-pink-100 text-pink-800 border-pink-200';
-      case 'personal': return 'bg-indigo-100 text-indigo-800 border-indigo-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getGoalTitle = (goalId: number) => {
+  const getGoalTitle = (goalId?: number) => {
+    if (!goalId) return 'No Goal';
     const goal = goals.find(g => g.id === goalId);
     return goal ? goal.title : 'Unknown Goal';
   };
@@ -219,7 +192,8 @@ export function TasksSection({ tasks, setTasks, goals, userData, updateUserData 
                         {task.title}
                       </h3>
                       <div className="flex items-center space-x-2">
-                        <Badge variant="outline" className={getCategoryColor(task.category)}>
+                        <Badge variant="outline" className={getCategoryBadge(task.category)}>
+                          <span className="mr-1">{getCategoryIcon(task.category)}</span>
                           {task.category}
                         </Badge>
                         <span className="text-sm text-gray-500">
@@ -236,7 +210,7 @@ export function TasksSection({ tasks, setTasks, goals, userData, updateUserData 
                           : 'bg-yellow-100 text-yellow-800'
                       }`}>
                         <Star className="w-3 h-3" />
-                        <span>{task.xpReward} XP</span>
+                        <span>{formatNumber.xp(task.xpReward || 0)} XP</span>
                       </div>
                     </div>
                   </div>

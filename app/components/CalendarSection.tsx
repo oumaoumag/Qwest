@@ -6,52 +6,36 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Calendar, Target, CheckCircle, Clock, Plus } from './ui/icons';
 
-interface Goal {
-  id: number;
-  title: string;
-  category: string;
-  dueDate: string;
-  completed: boolean;
-}
+// Import domain utilities
+import {
+  CalendarEvent,
+  CalendarSectionProps
+} from '../domain/types';
+import {
+  getCategoryBadge,
+  getCategoryIcon
+} from '../domain/constants';
+import { formatDate } from '../domain/format';
 
-interface Task {
-  id: number;
-  title: string;
-  category: string;
-  completed: boolean;
-}
-
-interface CalendarEvent {
-  type: string;
-  title: string;
-  category: string;
-  id: number;
-  completed: boolean;
-}
-
-interface CalendarSectionProps {
-  goals: Goal[];
-  tasks: Task[];
-}
-
-export function CalendarSection({ goals, tasks }: CalendarSectionProps) {
+export function CalendarSection({ goals, tasks, events }: CalendarSectionProps) {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewMode, setViewMode] = useState('month');
 
   // Generate calendar events from goals and tasks
   const getEventsForDate = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
-    const events: CalendarEvent[] = [];
+    const dateStr = formatDate.inputDate(date);
+    const calendarEvents: CalendarEvent[] = [];
 
     // Add goal deadlines
     goals.forEach(goal => {
       if (goal.dueDate === dateStr) {
-        events.push({
+        calendarEvents.push({
+          id: goal.id,
           type: 'goal-deadline',
           title: goal.title,
           category: goal.category,
-          id: goal.id,
-          completed: goal.completed
+          completed: goal.completed,
+          date: date
         });
       }
     });
@@ -59,17 +43,26 @@ export function CalendarSection({ goals, tasks }: CalendarSectionProps) {
     // Add recurring tasks (simplified logic)
     tasks.forEach(task => {
       if (task.category === 'health' || task.category === 'education') {
-        events.push({
+        calendarEvents.push({
+          id: task.id,
           type: 'recurring-task',
           title: task.title,
           category: task.category,
-          id: task.id,
-          completed: task.completed
+          completed: task.completed,
+          date: date
         });
       }
     });
 
-    return events;
+    // Add custom events if provided
+    if (events) {
+      const dayEvents = events.filter(event =>
+        event.date && formatDate.inputDate(event.date) === dateStr
+      );
+      calendarEvents.push(...dayEvents);
+    }
+
+    return calendarEvents;
   };
 
   const getUpcomingEvents = () => {
@@ -85,17 +78,7 @@ export function CalendarSection({ goals, tasks }: CalendarSectionProps) {
     return upcoming;
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'health': return 'bg-green-100 text-green-800 border-green-200';
-      case 'finance': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'education': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'career': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'relationships': return 'bg-pink-100 text-pink-800 border-pink-200';
-      case 'personal': return 'bg-indigo-100 text-indigo-800 border-indigo-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
+
 
   const selectedEvents = getEventsForDate(selectedDate);
   const upcomingEvents = getUpcomingEvents();
@@ -212,7 +195,8 @@ export function CalendarSection({ goals, tasks }: CalendarSectionProps) {
                       <div className="flex items-start justify-between">
                         <div>
                           <h4 className="font-medium">{event.title}</h4>
-                          <Badge variant="outline" className={getCategoryColor(event.category)}>
+                          <Badge variant="outline" className={getCategoryBadge(event.category)}>
+                            <span className="mr-1">{getCategoryIcon(event.category)}</span>
                             {event.category}
                           </Badge>
                         </div>
@@ -272,7 +256,8 @@ export function CalendarSection({ goals, tasks }: CalendarSectionProps) {
                               <Clock className="w-3 h-3 text-blue-500 flex-shrink-0" />
                             )}
                             <span className="text-sm font-medium truncate">{event.title}</span>
-                            <Badge variant="outline" className={`text-xs ${getCategoryColor(event.category)}`}>
+                            <Badge variant="outline" className={`text-xs ${getCategoryBadge(event.category)}`}>
+                              <span className="mr-1">{getCategoryIcon(event.category)}</span>
                               {event.category}
                             </Badge>
                           </div>

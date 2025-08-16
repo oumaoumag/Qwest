@@ -4,11 +4,9 @@ import React from 'react';
 import { Button } from './ui/button';
 import { Star, Trophy, Flame, Map, BarChart3, Target, CheckSquare, Bot, Calendar, User } from './ui/icons';
 
-interface UserData {
-  level: number;
-  xp: number;
-  streak: number;
-}
+// Import domain types
+import { UserData } from '../domain/types';
+import { formatNumber } from '../domain/format';
 
 interface NavigationProps {
   activeSection: string;
@@ -73,7 +71,7 @@ export function Navigation({ activeSection, setActiveSection, userData }: Naviga
               </div>
               <div className="flex items-center space-x-1">
                 <Star className="w-4 h-4 text-yellow-500" filled />
-                <span className="text-sm font-semibold text-gray-700">{userData.xp}</span>
+                <span className="text-sm font-semibold text-gray-700">{formatNumber.xp(userData.xp)}</span>
               </div>
               <div className="flex items-center space-x-1">
                 <Trophy className="w-4 h-4 text-purple-500" />

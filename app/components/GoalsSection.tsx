@@ -7,55 +7,18 @@ import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Plus, Target, CheckCircle, Flame, TrendingUp, Calendar } from './ui/icons';
 
-interface Goal {
-  id: number;
-  title: string;
-  category: string;
-  progress: number;
-  dueDate: string;
-  completed: boolean;
-  type: string;
-  target: number;
-  streak: number;
-}
-
-interface GoalsSectionProps {
-  goals: Goal[];
-  setGoals: (goals: Goal[]) => void;
-}
+// Import domain utilities
+import { GoalsSectionProps } from '../domain/types';
+import {
+  getCategoryText,
+  getGoalTypeColor
+} from '../domain/constants';
+import {
+  formatDuration,
+  formatDaysUntilDeadline
+} from '../domain/format';
 
 export function GoalsSection({ goals }: GoalsSectionProps) {
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'health': return 'text-green-600 border-green-200';
-      case 'finance': return 'text-blue-600 border-blue-200';
-      case 'education': return 'text-purple-600 border-purple-200';
-      case 'career': return 'text-orange-600 border-orange-200';
-      case 'relationships': return 'text-pink-600 border-pink-200';
-      case 'personal': return 'text-indigo-600 border-indigo-200';
-      default: return 'text-gray-600 border-gray-200';
-    }
-  };
-
-  const getTimeframeBadgeColor = (type: string) => {
-    switch (type) {
-      case 'daily': return 'bg-green-100 text-green-800';
-      case 'weekly': return 'bg-blue-100 text-blue-800';
-      case 'monthly': return 'bg-purple-100 text-purple-800';
-      case 'quarterly': return 'bg-orange-100 text-orange-800';
-      case 'yearly': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getDaysUntilDeadline = (dueDate: string) => {
-    const today = new Date();
-    const deadline = new Date(dueDate);
-    const diffTime = deadline.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
 
   return (
     <div className="p-6 space-y-6">
@@ -116,19 +79,17 @@ export function GoalsSection({ goals }: GoalsSectionProps) {
       {/* Goals Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {goals.map((goal) => {
-          const daysLeft = getDaysUntilDeadline(goal.dueDate);
-          const isOverdue = daysLeft < 0;
-          const isDueSoon = daysLeft <= 3 && daysLeft >= 0;
+          const { text: daysText, color: daysColor } = formatDaysUntilDeadline(goal.dueDate);
 
           return (
             <Card key={goal.id} className={`hover:shadow-lg transition-shadow ${goal.completed ? 'border-green-200 bg-green-50/50' : ''}`}>
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="space-y-2">
-                    <Badge variant="outline" className={getCategoryColor(goal.category)}>
+                    <Badge variant="outline" className={getCategoryText(goal.category)}>
                       {goal.category}
                     </Badge>
-                    <Badge variant="secondary" className={getTimeframeBadgeColor(goal.type)}>
+                    <Badge variant="secondary" className={getGoalTypeColor(goal.type)}>
                       {goal.type}
                     </Badge>
                   </div>
@@ -150,7 +111,7 @@ export function GoalsSection({ goals }: GoalsSectionProps) {
                   {goal.streak > 0 && (
                     <div className="flex items-center space-x-1 text-orange-600 text-sm">
                       <Flame className="w-4 h-4" />
-                      <span>{goal.streak} day streak</span>
+                      <span>{formatDuration.streak(goal.streak)}</span>
                     </div>
                   )}
                 </div>
@@ -166,13 +127,8 @@ export function GoalsSection({ goals }: GoalsSectionProps) {
                 <div className="flex items-center justify-between text-sm text-gray-500">
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-4 h-4" />
-                    <span>
-                      {isOverdue 
-                        ? `${Math.abs(daysLeft)} days overdue`
-                        : isDueSoon 
-                        ? `${daysLeft} days left`
-                        : new Date(goal.dueDate).toLocaleDateString()
-                      }
+                    <span className={daysColor}>
+                      {daysText}
                     </span>
                   </div>
                   <div className="flex items-center space-x-1">

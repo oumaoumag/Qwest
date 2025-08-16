@@ -15,40 +15,13 @@ import {
   BarChart3
 } from './ui/icons';
 
-interface UserData {
-  level: number;
-  xp: number;
-  streak: number;
-  totalGoals: number;
-  completedGoals: number;
-  achievements: number;
-  tokens: number;
-}
-
-interface Goal {
-  id: number;
-  title: string;
-  progress: number;
-  category: string;
-}
-
-interface Task {
-  id: number;
-  title: string;
-  completed: boolean;
-  xpReward: number;
-}
-
-interface DashboardSectionProps {
-  userData: UserData;
-  goals: Goal[];
-  tasks: Task[];
-}
+// Import domain types
+import { DashboardSectionProps } from '../domain/types';
 
 export function DashboardSection({ userData, goals, tasks }: DashboardSectionProps) {
   const completedTasks = tasks.filter(task => task.completed);
   const pendingTasks = tasks.filter(task => !task.completed);
-  const totalXpToday = completedTasks.reduce((sum, task) => sum + task.xpReward, 0);
+  const totalXpToday = completedTasks.reduce((sum, task) => sum + (task.xpReward || 0), 0);
 
   const weeklyStats = [
     { day: 'Mon', xp: 45, completed: true },
